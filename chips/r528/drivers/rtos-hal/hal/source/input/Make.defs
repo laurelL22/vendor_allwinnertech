@@ -1,0 +1,1 @@
+include $(AW_SRCDIR)$(DELIM)drivers$(DELIM)rtos-hal$(DELIM)hal$(DELIM)source$(DELIM)input$(DELIM)tp$(DELIM)Make.defs

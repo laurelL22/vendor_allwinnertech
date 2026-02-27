@@ -1,0 +1,8 @@
+一、编译说明
+1. 下载openvela源码
+2. 将当前目录内容拷贝到vendor/allwinnertech
+3. cd lichee; source envsetup.sh
+4. lunch_nuttx r528s3-evb4_bootloader
+5. 执行m编译, m distclean清理; 或者参考vela文档，顶层目录执行 ./build.sh vendor/allwinnertech/boards/r528/r528s3-evb4/configs/bootloader -e -Wno-error V=s -j32进行编译
+6. 执行pack打包
+

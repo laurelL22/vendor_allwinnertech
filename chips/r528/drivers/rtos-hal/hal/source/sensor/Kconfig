@@ -1,0 +1,10 @@
+menu "Sensor Devices"
+
+config SENSORS_HX3203
+        bool "HX3203 Ambient Light Sensor for uORB"
+        default n
+        select DRIVERS_TWI
+        ---help---
+                Enable support for the HX3203 Ambient Light Sensor driver.
+
+endmenu

@@ -1,0 +1,14 @@
+ifeq ($(CONFIG_DRIVERS_GPADC),y)
+# Include platform's table.
+# Include build support
+
+GPADC_PATH=$(DRV_SOURCE_PATH)$(DELIM)gpadc
+
+DEPPATH+=--dep-path $(GPADC_PATH)
+VPATH+=:chip$(DELIM)$(GPADC_PATH)
+
+# Include the  module.
+CHIP_CSRCS += $(GPADC_PATH)$(DELIM)hal_gpadc.c
+
+endif
+

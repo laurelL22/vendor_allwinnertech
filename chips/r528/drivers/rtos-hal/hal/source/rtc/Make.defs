@@ -1,0 +1,23 @@
+ifeq ($(CONFIG_DRIVERS_RTC),y)
+# Include platform's table.
+# Include build support
+
+DRV_SOURCE_PATH=drivers$(DELIM)rtos-hal$(DELIM)hal$(DELIM)source
+RTC_PATH=drivers$(DELIM)rtos-hal$(DELIM)hal$(DELIM)source$(DELIM)rtc
+
+DEPPATH+=--dep-path $(RTC_PATH)
+VPATH+=:chip$(DELIM)$(RTC_PATH)
+
+ARCH_SRC := $(TOPDIR)$(DELIM)arch$(DELIM)$(CONFIG_ARCH)$(DELIM)src
+ARCH_INC := $(TOPDIR)$(DELIM)arch$(DELIM)$(CONFIG_ARCH)$(DELIM)include
+ARCH_RTC_SRC_PATH:=$(ARCH_SRC)$(DELIM)$(CONFIG_ARCH_CHIP)$(DELIM)$(RTC_PATH)
+
+CFLAGS += ${INCDIR_PREFIX}$(ARCH_RTC_SRC_PATH)
+CFLAGS += ${INCDIR_PREFIX}$(ARCH_RTC_SRC_PATH)$(DELIM)platform
+
+# Include the  module.
+CHIP_CSRCS += $(RTC_PATH)$(DELIM)hal_rtc.c
+CHIP_CSRCS += $(RTC_PATH)$(DELIM)rtc-lib.c
+
+endif
+

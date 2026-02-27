@@ -1,0 +1,20 @@
+ifeq ($(CONFIG_DRIVERS_EFUSE),y)
+# Include platform's table.
+# Include build support
+
+EFUSE_PATH=$(DRV_SOURCE_PATH)$(DELIM)efuse
+
+DEPPATH+=--dep-path $(EFUSE_PATH)
+VPATH+=:chip$(DELIM)$(EFUSE_PATH)
+
+ARCH_EFUSE_SRC_PATH:=$(ARCH_SRC)$(DELIM)$(CONFIG_ARCH_CHIP)$(DELIM)$(EFUSE_PATH)
+
+CFLAGS += ${INCDIR_PREFIX}$(ARCH_EFUSE_SRC_PATH)
+CFLAGS += ${INCDIR_PREFIX}$(ARCH_EFUSE_SRC_PATH)$(DELIM)platform
+
+# Include the  module.
+CHIP_CSRCS += $(EFUSE_PATH)$(DELIM)efuse.c
+CHIP_CSRCS += $(EFUSE_PATH)$(DELIM)hal_efuse.c
+
+endif
+

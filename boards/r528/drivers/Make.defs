@@ -1,0 +1,5 @@
+#include platform/realtek_ieee80211/Make.defs
+
+#DEPPATH += --dep-path platform$(DELIM)include$(DELIM)
+#VPATH += :platform$(DELIM)include$(DELIM)
+#CFLAGS += ${INCDIR_PREFIX}$(TOPDIR)$(DELIM)drivers$(DELIM)platform$(DELIM)include

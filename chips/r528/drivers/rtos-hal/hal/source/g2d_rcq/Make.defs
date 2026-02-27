@@ -1,0 +1,31 @@
+ifeq ($(CONFIG_DRIVERS_G2D),y)
+# Include platform's table.
+# Include build support
+
+DRV_SOURCE_PATH=drivers$(DELIM)rtos-hal$(DELIM)hal$(DELIM)source
+G2D_PATH=drivers$(DELIM)rtos-hal$(DELIM)hal$(DELIM)source$(DELIM)g2d_rcq
+
+DEPPATH+=--dep-path $(G2D_PATH) 
+VPATH+=:chip$(DELIM)$(G2D_PATH)
+
+ARCH_SRC := $(TOPDIR)$(DELIM)arch$(DELIM)$(CONFIG_ARCH)$(DELIM)src
+ARCH_INC := $(TOPDIR)$(DELIM)arch$(DELIM)$(CONFIG_ARCH)$(DELIM)include
+ARCH_G2D_SRC_PATH:=$(ARCH_SRC)$(DELIM)chip$(DELIM)$(G2D_PATH)
+
+CFLAGS += ${INCDIR_PREFIX}$(ARCH_G2D_SRC_PATH)
+
+CHIP_CSRCS += $(G2D_PATH)$(DELIM)g2d_mixer.c
+CHIP_CSRCS += $(G2D_PATH)$(DELIM)g2d_ovl_v.c
+CHIP_CSRCS += $(G2D_PATH)$(DELIM)g2d_ovl_u.c
+CHIP_CSRCS += $(G2D_PATH)$(DELIM)g2d_rcq.c
+CHIP_CSRCS += $(G2D_PATH)$(DELIM)g2d_scal.c
+CHIP_CSRCS += $(G2D_PATH)$(DELIM)g2d_wb.c
+CHIP_CSRCS += $(G2D_PATH)$(DELIM)g2d_bld.c
+CHIP_CSRCS += $(G2D_PATH)$(DELIM)g2d.c
+CHIP_CSRCS += $(G2D_PATH)$(DELIM)g2d_top.c
+CHIP_CSRCS += $(G2D_PATH)$(DELIM)g2d_rotate.c
+CHIP_CSRCS += $(G2D_PATH)$(DELIM)simple_idr.c
+CHIP_CSRCS += $(G2D_PATH)$(DELIM)simple_idr_vela.c
+
+endif
+

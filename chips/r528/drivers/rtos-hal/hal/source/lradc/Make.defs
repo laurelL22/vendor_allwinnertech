@@ -1,0 +1,22 @@
+ifeq ($(CONFIG_DRIVERS_LRADC),y)
+# Include platform's table.
+# Include build support
+
+DRV_SOURCE_PATH=drivers$(DELIM)rtos-hal$(DELIM)hal$(DELIM)source
+LRADC_PATH=drivers$(DELIM)rtos-hal$(DELIM)hal$(DELIM)source$(DELIM)lradc
+
+DEPPATH+=--dep-path $(LRADC_PATH)
+VPATH+=:chip$(DELIM)$(LRADC_PATH)
+
+ARCH_SRC := $(TOPDIR)$(DELIM)arch$(DELIM)$(CONFIG_ARCH)$(DELIM)src
+ARCH_INC := $(TOPDIR)$(DELIM)arch$(DELIM)$(CONFIG_ARCH)$(DELIM)include
+ARCH_PWM_SRC_PATH:=$(ARCH_SRC)$(DELIM)$(CONFIG_ARCH_CHIP)$(DELIM)$(LRADC_PATH)
+
+CFLAGS += ${INCDIR_PREFIX}$(ARCH_PWM_SRC_PATH)
+CFLAGS += ${INCDIR_PREFIX}$(ARCH_PWM_SRC_PATH)$(DELIM)platform
+
+# Include the  module.
+CHIP_CSRCS += $(LRADC_PATH)$(DELIM)hal_lradc.c
+
+endif
+

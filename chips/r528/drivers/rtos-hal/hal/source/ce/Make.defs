@@ -1,0 +1,7 @@
+CE_PATH=drivers$(DELIM)rtos-hal$(DELIM)hal$(DELIM)source$(DELIM)ce
+
+ifeq ($(CONFIG_DRIVERS_CE), y)
+CHIP_CSRCS += $(CE_PATH)$(DELIM)hal_ce.c
+CHIP_CSRCS += $(CE_PATH)$(DELIM)ce_common.c
+CHIP_CSRCS += $(CE_PATH)$(DELIM)dev_rng.c
+endif

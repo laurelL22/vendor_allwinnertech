@@ -1,0 +1,5 @@
+DRV_RTC_PATH=drv$(DELIM)rtc
+
+ifeq ($(CONFIG_DRIVERS_RTC), y)
+CHIP_CSRCS += $(DRV_RTC_PATH)$(DELIM)drv_rtc.c
+endif

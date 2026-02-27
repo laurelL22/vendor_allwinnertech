@@ -1,0 +1,12 @@
+OSAL_TEST_SOURCE_PATH=components$(DELIM)osal_test
+
+DEPPATH+=--dep-path $(OSAL_TEST_SOURCE_PATH)
+VPATH+=:chip$(DELIM)$(OSAL_TEST_SOURCE_PATH)
+
+# Include the  module.
+CHIP_CSRCS += $(OSAL_TEST_SOURCE_PATH)$(DELIM)hal_thread_test.c
+CHIP_CSRCS += $(OSAL_TEST_SOURCE_PATH)$(DELIM)hal_sem_test.c
+CHIP_CSRCS += $(OSAL_TEST_SOURCE_PATH)$(DELIM)hal_mutex_test.c
+CHIP_CSRCS += $(OSAL_TEST_SOURCE_PATH)$(DELIM)hal_queue_test.c
+CHIP_CSRCS += $(OSAL_TEST_SOURCE_PATH)$(DELIM)hal_workqueue_test.c
+CHIP_CSRCS += $(OSAL_TEST_SOURCE_PATH)$(DELIM)hal_timer_test.c

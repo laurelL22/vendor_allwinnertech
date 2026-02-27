@@ -1,0 +1,106 @@
+ifeq ($(CONFIG_DISP2_SUNXI),y)
+# Include platform's table.
+# Include build support
+
+DRV_SOURCE_PATH=drivers$(DELIM)rtos-hal$(DELIM)hal$(DELIM)source
+DISP_PATH=drivers$(DELIM)rtos-hal$(DELIM)hal$(DELIM)source$(DELIM)disp2
+
+DEPPATH+=--dep-path $(DISP_PATH) 
+VPATH+=:chip$(DELIM)$(DISP_PATH)
+
+ARCH_SRC := $(TOPDIR)$(DELIM)arch$(DELIM)$(CONFIG_ARCH)$(DELIM)src
+ARCH_INC := $(TOPDIR)$(DELIM)arch$(DELIM)$(CONFIG_ARCH)$(DELIM)include
+ARCH_DISP_SRC_PATH:=$(ARCH_SRC)$(DELIM)$(CONFIG_ARCH_CHIP)$(DELIM)$(DISP_PATH)
+
+CFLAGS += ${INCDIR_PREFIX}$(ARCH_DISP_SRC_PATH)
+CFLAGS += ${INCDIR_PREFIX}$(ARCH_DISP_SRC_PATH)$(DELIM)soc
+CFLAGS += ${INCDIR_PREFIX}$(AW_SRCDIR)$(DELIM)$(DISP_PATH)$(DELIM)soc
+
+# Include the  module.
+CHIP_CSRCS += $(DISP_PATH)$(DELIM)soc$(DELIM)sun8iw20.c
+
+ifeq ($(CONFIG_ARCH_BOARD_R528S3_EVB2), y)
+CHIP_CSRCS += $(DISP_PATH)$(DELIM)soc$(DELIM)gc9503cv_mipi_config_evb2.c
+endif
+
+ifeq ($(CONFIG_ARCH_BOARD_R528S3_EVB4), y)
+CHIP_CSRCS += $(DISP_PATH)$(DELIM)soc$(DELIM)gc9503cv_mipi_config_evb4.c
+endif
+
+ifeq ($(CONFIG_ARCH_BOARD_R528S3_VELAEVB1), y)
+CHIP_CSRCS += $(DISP_PATH)$(DELIM)soc$(DELIM)zjy4305_rgb_config_evb1.c
+endif
+
+ifeq ($(CONFIG_ARCH_BOARD_R528S3_X4B), y)
+CHIP_CSRCS += $(DISP_PATH)$(DELIM)soc$(DELIM)gc9503cv_mipi_config_x4b.c
+endif
+CHIP_CSRCS += $(DISP_PATH)$(DELIM)soc$(DELIM)disp_board_config.c
+CHIP_CSRCS += $(DISP_PATH)$(DELIM)soc$(DELIM)platform_resource.c
+CHIP_CSRCS += $(DISP_PATH)$(DELIM)disp$(DELIM)dev_disp.c
+CHIP_CSRCS += $(DISP_PATH)$(DELIM)disp$(DELIM)disp_sys_intf.c
+#CHIP_CSRCS += $(DISP_PATH)$(DELIM)disp$(DELIM)disp_debug.c
+CHIP_CSRCS += $(DISP_PATH)$(DELIM)disp$(DELIM)de$(DELIM)disp_display.c
+CHIP_CSRCS += $(DISP_PATH)$(DELIM)disp$(DELIM)de$(DELIM)disp_features.c
+CHIP_CSRCS += $(DISP_PATH)$(DELIM)disp$(DELIM)de$(DELIM)disp_device.c
+CHIP_CSRCS += $(DISP_PATH)$(DELIM)disp$(DELIM)de$(DELIM)disp_lcd.c
+CHIP_CSRCS += $(DISP_PATH)$(DELIM)disp$(DELIM)de$(DELIM)disp_manager.c
+CHIP_CSRCS += $(DISP_PATH)$(DELIM)disp$(DELIM)de$(DELIM)disp_private.c
+CHIP_CSRCS += $(DISP_PATH)$(DELIM)disp$(DELIM)de$(DELIM)disp_capture.c
+CHIP_CSRCS += $(DISP_PATH)$(DELIM)disp$(DELIM)de$(DELIM)disp_tv.c
+
+ifeq ($(CONFIG_DISP2_SUNXI_SUPPORT_ENAHNCE),y)
+CHIP_CSRCS += $(DISP_PATH)$(DELIM)disp$(DELIM)de$(DELIM)disp_enhance.c
+endif
+
+ifeq ($(CONFIG_DISP2_SUNXI_SUPPORT_SMBL),y)
+CHIP_CSRCS += $(DISP_PATH)$(DELIM)disp$(DELIM)de$(DELIM)disp_smart_backlight.c
+endif
+
+ifeq ($(CONFIG_SUNXI_DISP2_FB_HW_ROTATION_SUPPORT),y)
+CHIP_CSRCS += $(DISP_PATH)$(DELIM)disp$(DELIM)fb_g2d_rot.c
+endif
+
+CHIP_CSRCS += $(DISP_PATH)$(DELIM)disp$(DELIM)de$(DELIM)lowlevel_v2x$(DELIM)de_dsi.c
+CHIP_CSRCS += $(DISP_PATH)$(DELIM)disp$(DELIM)de$(DELIM)lowlevel_v2x$(DELIM)de_wb.c
+CHIP_CSRCS += $(DISP_PATH)$(DELIM)disp$(DELIM)de$(DELIM)lowlevel_v2x$(DELIM)de_lcd_sun50iw10.c
+CHIP_CSRCS += $(DISP_PATH)$(DELIM)disp$(DELIM)de$(DELIM)lowlevel_v2x$(DELIM)de_fcc.c
+CHIP_CSRCS += $(DISP_PATH)$(DELIM)disp$(DELIM)de$(DELIM)lowlevel_v2x$(DELIM)de_gsu.c
+CHIP_CSRCS += $(DISP_PATH)$(DELIM)disp$(DELIM)de$(DELIM)lowlevel_v2x$(DELIM)de_hal.c
+CHIP_CSRCS += $(DISP_PATH)$(DELIM)disp$(DELIM)de$(DELIM)lowlevel_v2x$(DELIM)disp_al.c
+CHIP_CSRCS += $(DISP_PATH)$(DELIM)disp$(DELIM)de$(DELIM)lowlevel_v2x$(DELIM)de_peak.c
+CHIP_CSRCS += $(DISP_PATH)$(DELIM)disp$(DELIM)de$(DELIM)lowlevel_v2x$(DELIM)de_rtmx.c
+CHIP_CSRCS += $(DISP_PATH)$(DELIM)disp$(DELIM)de$(DELIM)lowlevel_v2x$(DELIM)de_scaler_table.c
+CHIP_CSRCS += $(DISP_PATH)$(DELIM)disp$(DELIM)de$(DELIM)lowlevel_v2x$(DELIM)de_vep_table.c
+CHIP_CSRCS += $(DISP_PATH)$(DELIM)disp$(DELIM)de$(DELIM)lowlevel_v2x$(DELIM)de_vsu.c
+CHIP_CSRCS += $(DISP_PATH)$(DELIM)disp$(DELIM)de$(DELIM)lowlevel_v2x$(DELIM)de_feat.c
+CHIP_CSRCS += $(DISP_PATH)$(DELIM)disp$(DELIM)de$(DELIM)lowlevel_v2x$(DELIM)de_lti.c
+CHIP_CSRCS += $(DISP_PATH)$(DELIM)disp$(DELIM)de$(DELIM)lowlevel_v2x$(DELIM)de_fce.c
+CHIP_CSRCS += $(DISP_PATH)$(DELIM)disp$(DELIM)de$(DELIM)lowlevel_v2x$(DELIM)de_ase.c
+CHIP_CSRCS += $(DISP_PATH)$(DELIM)disp$(DELIM)de$(DELIM)lowlevel_v2x$(DELIM)de_bws.c
+CHIP_CSRCS += $(DISP_PATH)$(DELIM)disp$(DELIM)de$(DELIM)lowlevel_v2x$(DELIM)de_enhance.c
+CHIP_CSRCS += $(DISP_PATH)$(DELIM)disp$(DELIM)de$(DELIM)lowlevel_v2x$(DELIM)de_smbl.c
+CHIP_CSRCS += $(DISP_PATH)$(DELIM)disp$(DELIM)de$(DELIM)lowlevel_v2x$(DELIM)de_ccsc.c
+CHIP_CSRCS += $(DISP_PATH)$(DELIM)disp$(DELIM)de$(DELIM)lowlevel_v2x$(DELIM)de_dcsc.c
+CHIP_CSRCS += $(DISP_PATH)$(DELIM)disp$(DELIM)de$(DELIM)lowlevel_v2x$(DELIM)de_clock.c
+CHIP_CSRCS += $(DISP_PATH)$(DELIM)disp$(DELIM)lcd$(DELIM)panels.c
+CHIP_CSRCS += $(DISP_PATH)$(DELIM)disp$(DELIM)lcd$(DELIM)lcd_source.c
+CHIP_CSRCS += $(DISP_PATH)$(DELIM)disp$(DELIM)lcd$(DELIM)default_panel.c
+
+ifeq ($(CONFIG_LCD_SUPPORT_GC9503CV),y)
+CHIP_CSRCS += $(DISP_PATH)$(DELIM)disp$(DELIM)lcd$(DELIM)gc9503cv.c
+endif
+
+ifeq ($(CONFIG_LCD_SUPPORT_ST7701S),y)
+CHIP_CSRCS += $(DISP_PATH)$(DELIM)disp$(DELIM)lcd$(DELIM)st7701s.c
+endif
+
+ifeq ($(CONFIG_LCD_SUPPORT_TFT08006),y)
+CHIP_CSRCS += $(DISP_PATH)$(DELIM)disp$(DELIM)lcd$(DELIM)tft08006.c
+endif
+
+ifeq ($(CONFIG_VIDEO_FB),y)
+CHIP_CSRCS += $(DISP_PATH)$(DELIM)disp$(DELIM)dev_fb.c
+endif
+
+endif
+

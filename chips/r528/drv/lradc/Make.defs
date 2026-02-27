@@ -1,0 +1,5 @@
+DRV_LRADC_PATH=drv$(DELIM)lradc
+
+ifeq ($(CONFIG_DRIVERS_LRADC), y)
+CHIP_CSRCS += $(DRV_LRADC_PATH)$(DELIM)drv_lradc.c
+endif

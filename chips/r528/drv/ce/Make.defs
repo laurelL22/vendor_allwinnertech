@@ -1,0 +1,7 @@
+DRV_CE_PATH=drv$(DELIM)ce
+
+ifeq ($(CONFIG_DRIVERS_CE), y)
+CHIP_CSRCS += $(DRV_CE_PATH)$(DELIM)drv_ce.c
+CHIP_CSRCS += $(DRV_CE_PATH)$(DELIM)hw_hash.c
+CHIP_CSRCS += $(DRV_CE_PATH)$(DELIM)hw_aes.c
+endif
