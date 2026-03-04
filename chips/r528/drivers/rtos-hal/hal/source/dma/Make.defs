@@ -2,19 +2,19 @@ ifeq ($(CONFIG_DRIVERS_DMA),y)
 # Include platform's table.
 # Include build support
 
-DRV_SOURCE_PATH=drivers$(DELIM)rtos-hal$(DELIM)hal$(DELIM)source
-DMA_PATH=drivers$(DELIM)rtos-hal$(DELIM)hal$(DELIM)source$(DELIM)dma
+DRV_SOURCE_PATH=drivers/rtos-hal/hal/source
+DMA_PATH=drivers/rtos-hal/hal/source/dma
 
 DEPPATH+=--dep-path $(DMA_PATH)
-VPATH+=:chip$(DELIM)$(DMA_PATH)
+VPATH+=:chip/$(DMA_PATH)
 
-ARCH_DMA_SRC_PATH:=$(ARCH_SRC)$(DELIM)$(CONFIG_ARCH_CHIP)$(DELIM)$(DMA_PATH)
+ARCH_DMA_SRC_PATH:=$(ARCH_SRC)/$(CONFIG_ARCH_CHIP)/$(DMA_PATH)
 
 CFLAGS += ${INCDIR_PREFIX}$(ARCH_DMA_SRC_PATH)
-CFLAGS += ${INCDIR_PREFIX}$(ARCH_DMA_SRC_PATH)$(DELIM)platform
+CFLAGS += ${INCDIR_PREFIX}$(ARCH_DMA_SRC_PATH)/platform
 
 # Include the  module.
-CHIP_CSRCS += $(DMA_PATH)$(DELIM)hal_dma.c
+CHIP_CSRCS += $(DMA_PATH)/hal_dma.c
 
 endif
 

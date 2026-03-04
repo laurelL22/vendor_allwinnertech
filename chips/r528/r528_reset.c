@@ -141,7 +141,7 @@ uint32_t r528_read_resetflag(void)
 		value = write_bootreason(BOARDIOC_RESETCAUSE_SYS_CHIPPOR, 0);
 	} else {
 		struct r528_wdt_dev_t *dev = watchdog_get_dev();
-		uint32_t wdt_value = hal_readl(dev->wdt_base + dev->wdt_regs->wdt_timeout_shift);
+		uint32_t wdt_value = hal_readl(R528_WDT_BASE + R528_WDT_STATUS);
 		/* Check wdt pending flag before initialize it to check if hardware wdt has happened. */
 		if (wdt_value == 1) {
 			value = write_bootreason(BOARDIOC_RESETCAUSE_SYS_RWDT, 0);

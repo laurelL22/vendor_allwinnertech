@@ -244,17 +244,28 @@ static int hal_rtc_wait(int offset, unsigned int mask, unsigned int ms_timeout)
 {
     struct hal_rtc_dev *rtc_dev = &sunxi_hal_rtc;
     u32 reg;
+    unsigned int elapsed = 0;
+    const unsigned int poll_interval = 1; /* 1ms poll interval */
 
-    hal_msleep(ms_timeout);
-
-    reg = hal_readl(rtc_dev->base + offset);
-    reg &= mask;
-
-    if (reg != mask)
+    /* Poll until condition is met or timeout */
+    while (elapsed < ms_timeout)
     {
-        return 0;
+        /* Read register value */
+        reg = hal_readl(rtc_dev->base + offset);
+        reg &= mask;
+
+        /* Check if condition is met */
+        if (reg == 0)
+        {
+            return 0; /* Condition met */
+        }
+
+        /* Sleep for poll interval */
+        hal_msleep(poll_interval);
+        elapsed += poll_interval;
     }
 
+    /* Timeout - condition not met */
     return -1;
 }
 
@@ -631,6 +642,7 @@ int hal_rtc_setalarm(struct rtc_wkalrm *wkalrm)
     }
 
     diff = rtc_tm_sub(alrm_tm, &tm_now);
+
     if (diff <= 0)
     {
         RTC_ERR("Date to set in the past");

@@ -182,4 +182,11 @@ extern struct __lcd_panel gc9503cv_panel;
 extern struct __lcd_panel b080uan01_panel;
 #endif
 
+#ifdef CONFIG_LCD_SUPPORT_T070S140B
+extern struct __lcd_panel t070s140b_panel;
+#endif
+#ifdef CONFIG_LCD_SUPPORT_SSD1306
+extern struct __lcd_panel ssd1306_panel;
+#endif
+
 #endif

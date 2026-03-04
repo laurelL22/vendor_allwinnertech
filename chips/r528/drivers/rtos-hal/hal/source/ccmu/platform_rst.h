@@ -33,7 +33,6 @@
 #ifndef __PLATFORM_RST_H__
 #define __PLATFORM_RST_H__
 
-#if 0
 #if defined(CONFIG_DRIVERS_SUNXI_CCU)
 
 #if defined(CONFIG_SOC_SUN20IW1) || defined(CONFIG_ARCH_SUN8IW20)
@@ -60,5 +59,5 @@
 #endif
 
 #endif
-#endif
+
 #endif /* __PLATFORM_RST_H__ */

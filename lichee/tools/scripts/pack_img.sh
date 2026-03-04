@@ -6,6 +6,10 @@
 # James Deng <csjamesdeng@allwinnertech.com>
 # Trace Wong <wangyaliang@allwinnertech.com>
 #
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
 
 ############################ Notice #####################################
 # a. Some config files priority is as follows:
@@ -543,13 +547,13 @@ function prepare_bl_size()
 	# align bl.fex size to 800K (need to be fixed size) for jira RTOSXMDPYX-1766
 	if [ -e ${PACK_TOPDIR}/board/${PACK_PROJECT_PATH}/configs/bl.fex ]; then
 		local bl_ori_size=`stat -c %s ${PACK_TOPDIR}/board/${PACK_PROJECT_PATH}/configs/bl.fex`
-	#	pack_info "bl.fex original size ${bl_ori_size}"
-	#	if [ ${bl_ori_size} -gt 819200 ]; then
-	#		pack_error "Need to adjust bl.fex fixed size"
-	#		exit 1
-	#	fi
-	#	truncate -s 819200 ${PACK_TOPDIR}/board/${PACK_PROJECT_PATH}/configs/bl.fex
-	#	pack_info "bl.fex expanding size ${bl_ori_size}"
+		pack_info "bl.fex original size ${bl_ori_size}"
+		#if [ ${bl_ori_size} -gt 819200 ]; then
+		#	pack_error "Need to adjust bl.fex fixed size"
+		#	exit 1
+		#fi
+		#truncate -s 819200 ${PACK_TOPDIR}/board/${PACK_PROJECT_PATH}/configs/bl.fex
+		pack_info "bl.fex expanding size ${bl_ori_size}"
 	fi
 }
 
@@ -1494,7 +1498,7 @@ elif [ x"${storage_type}" = x"3" ]; then
 	#prepare_for_8Mnor
 	#do_finish
 elif [ x"${storage_type}" = x"5" ]; then
-	if [ "x${PACK_BOARD}" == "xr528s3-evb4" ] ; then
+	if [ "x${PACK_BOARD}" == "xr528s3-gemini-s1" ] ; then
 		prepare_for_128Mnand
 	else
 		prepare_for_256Mnand

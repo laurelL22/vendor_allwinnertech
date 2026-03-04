@@ -1,8 +1,8 @@
 
-PLATFORM_PATH=$(DRV_SOURCE_PATH)$(DELIM)sound$(DELIM)platform
+PLATFORM_PATH=$(DRV_SOURCE_PATH)/sound/platform
 
 DEPPATH+=--dep-path $(PLATFORM_PATH)
-VPATH+=:chip$(DELIM)$(PLATFORM_PATH)
+VPATH+=:chip/$(PLATFORM_PATH)
 
 ifeq ($(CONFIG_SND_PLATFORM_SUNXI_CPUDAI),y)
 # Include platform's table.
@@ -10,7 +10,7 @@ ifeq ($(CONFIG_SND_PLATFORM_SUNXI_CPUDAI),y)
 
 # Include the  module.
 # Soundcards Register Select
-CHIP_CSRCS += $(PLATFORM_PATH)$(DELIM)sunxi-dummy-cpudai.c
+CHIP_CSRCS += $(PLATFORM_PATH)/sunxi-dummy-cpudai.c
 
 endif
 
@@ -20,7 +20,7 @@ ifeq ($(CONFIG_SND_PLATFORM_SUNXI_PCM),y)
 
 # Include the  module.
 # Soundcards Register Select
-CHIP_CSRCS += $(PLATFORM_PATH)$(DELIM)sunxi-pcm.c
+CHIP_CSRCS += $(PLATFORM_PATH)/sunxi-pcm.c
 
 endif
 
@@ -30,7 +30,7 @@ ifeq ($(CONFIG_SND_PLATFORM_SUNXI_DAUDIO),y)
 
 # Include the  module.
 # Soundcards Register Select
-CHIP_CSRCS += $(PLATFORM_PATH)$(DELIM)sunxi-daudio.c
+CHIP_CSRCS += $(PLATFORM_PATH)/sunxi-daudio.c
 
 endif
 
@@ -40,7 +40,7 @@ ifeq ($(CONFIG_SND_PLATFORM_SUNXI_DMIC),y)
 
 # Include the  module.
 # Soundcards Register Select
-CHIP_CSRCS += $(PLATFORM_PATH)$(DELIM)sunxi-dmic.c
+CHIP_CSRCS += $(PLATFORM_PATH)/sunxi-dmic.c
 
 endif
 

@@ -31,5 +31,5 @@
 #  OF THE POSSIBILITY OF SUCH DAMAGE.
 ############################################################################
 
-include $(AW_SRCDIR)$(DELIM)drivers$(DELIM)rtos-hal$(DELIM)hal$(DELIM)Make.defs
+include $(AW_SRCDIR)/drivers/rtos-hal/hal/Make.defs
 

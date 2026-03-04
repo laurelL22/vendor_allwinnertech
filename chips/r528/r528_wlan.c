@@ -28,6 +28,7 @@ int realtek_wlan_bringup(void)
   realtek_wl_set_gpio(dev,1);
   usleep(2000);*/
 
+  set_sdio_param(1,3,NULL);
   g_sdio_dev = sdio_initialize(1);
 
   ninfo("sdio init\n");

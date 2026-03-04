@@ -33,7 +33,6 @@
 #ifndef __PLATFORM_CCMU_H__
 #define __PLATFORM_CCMU_H__
 
-#if 0
 #if defined(CONFIG_DRIVERS_SUNXI_CLK)
 #include "./sunxi/platform_clk.h"
 #if defined(CONFIG_SOC_SUN20IW3) || defined(CONFIG_ARCH_SUN8IW21)
@@ -71,6 +70,5 @@
 #include "./sunxi-ng/ccu-sun60iw1-r.h"
 #endif
 
-#endif
 #endif
 #endif /* __PLATFORM_CCMU_H__ */

@@ -1,5 +1,5 @@
-DRV_PWM_PATH=drv$(DELIM)pwm
+DRV_PWM_PATH=drv/pwm
 
 ifeq ($(CONFIG_DRIVERS_PWM), y)
-CHIP_CSRCS += $(DRV_PWM_PATH)$(DELIM)drv_pwm.c
+CHIP_CSRCS += $(DRV_PWM_PATH)/drv_pwm.c
 endif

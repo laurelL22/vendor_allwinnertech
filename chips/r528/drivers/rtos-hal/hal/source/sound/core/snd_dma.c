@@ -123,13 +123,13 @@ snd_pcm_uframes_t snd_dmaengine_pcm_pointer(struct snd_pcm_substream *substream)
 	uint32_t buf_size;
 
 	status = dmaengine_tx_status(prtd->dma_chan, &residue);
-	snd_print("dma status:%u, residue:%u(0x%x) bytes\n", status, residue, residue);
+	snd_print("dma status:%d, residue:%lu(0x%lx) bytes\n", status, residue, residue);
 	if (status == DMA_IN_PROGRESS || status == DMA_PAUSED) {
 		buf_size = snd_pcm_lib_buffer_bytes(substream);
 		if (residue > 0 && residue <= buf_size)
 			pos = buf_size - residue;
 	}
-	snd_print("----pos:0x%x(%u) bytes, pos frames offset:0x%lx\n",
+	snd_print("----pos:0x%lx(%lu) bytes, pos frames offset:0x%lx\n",
 			pos, pos, bytes_to_frames(substream->runtime, pos));
 	return bytes_to_frames(substream->runtime, pos);
 }

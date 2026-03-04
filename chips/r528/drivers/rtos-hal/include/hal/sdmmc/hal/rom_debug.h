@@ -90,13 +90,13 @@
 	} while (0)
 
 #if ROM_DBG_ON
-#define ROM_DBG(level, fmt, arg...) ROM_LOG(level, ROM_DBG_MASK, "[DBG]", fmt, ##arg)
+#define ROM_DBG(level, fmt, arg...) ROM_LOG(level, ROM_DBG_MASK, "[DBG] ", fmt, ##arg)
 #else
 #define ROM_DBG(level, fmt, arg...)
 #endif
 
 #if ROM_INF_ON
-#define ROM_INF(level, fmt, arg...) ROM_LOG(level, ROM_INF_MASK, "", fmt, ##arg)
+#define ROM_INF(level, fmt, arg...) ROM_LOG(level, ROM_INF_MASK, "[INFO] ", fmt, ##arg)
 #else
 #define ROM_INF(level, fmt, arg...)
 #endif

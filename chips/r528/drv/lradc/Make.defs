@@ -1,5 +1,5 @@
-DRV_LRADC_PATH=drv$(DELIM)lradc
+DRV_LRADC_PATH=drv/lradc
 
 ifeq ($(CONFIG_DRIVERS_LRADC), y)
-CHIP_CSRCS += $(DRV_LRADC_PATH)$(DELIM)drv_lradc.c
+CHIP_CSRCS += $(DRV_LRADC_PATH)/drv_lradc.c
 endif

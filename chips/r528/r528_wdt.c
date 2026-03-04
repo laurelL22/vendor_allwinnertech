@@ -56,6 +56,10 @@
 #include <sunxi_hal_timer.h>
 #endif
 #include "sunxi_hal_wdt.h"
+#include <sunxi_hal_rtc.h>
+
+/* RTC reset flag register definition */
+#define RTC_RESET_FLAG_REG  SUNXI_RTC_DATA_BASE + 0x04
 
 #if defined(CONFIG_WATCHDOG) && defined(CONFIG_R528_WATCHDOG)
 #define USE_TIMER1_AS_WATCH_DOG 1
@@ -140,6 +144,10 @@ static void hal_timer_irq_callback(void *param)
 		up_mdelay(10);
 	}else{
 		wderr("timer timeout,call panic\n");
+		/* Set reset cause to watchdog reset */
+		uint32_t value = BOARDIOC_RESETCAUSE_SYS_RWDT;
+		value <<= 16;
+		hal_writel(value, RTC_RESET_FLAG_REG);
 		/* boot flag will be set to panic, instead of WDT,
 		since this is a timer irq not real WDT. */
 		syslog_flush();

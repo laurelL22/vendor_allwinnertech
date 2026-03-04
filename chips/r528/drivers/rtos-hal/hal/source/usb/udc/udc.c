@@ -34,7 +34,6 @@
 #include "usb_phy.h"
 #include "udc_platform.h"
 #include <nuttx/usb/usbdev.h>
-#include <nuttx/spinlock.h>
 #include <debug.h>
 
 #ifdef CONFIG_STANDBY
@@ -1303,7 +1302,7 @@ int sunxi_udc_submit(FAR struct usbdev_ep_s *ep, FAR struct usbdev_req_s *req)
 	struct sunxi_ep_s *privep = (struct sunxi_ep_s *)ep;
 	uint8_t old_ep_idx, fifo_idx, ep_idx;
 	udc_fifo_t fifo_config;
-	irqstate_t flags;
+	uint32_t flags = 0;
 
 	if (!req || !req->callback || !req->buf || !ep) {
 		syslog(LOG_ERR,"ERROR: req=%p callback=%p buf=%p ep=%p\r\n",
@@ -1316,7 +1315,7 @@ int sunxi_udc_submit(FAR struct usbdev_ep_s *ep, FAR struct usbdev_req_s *req)
 		return -1;
 	}
 
-	flags = up_irq_save();
+	flags = enter_critical_section();
 
 	if (is_in)
 		fifo_idx = g_ep_fifo_in[epno & 0x7f];
@@ -1348,7 +1347,7 @@ int sunxi_udc_submit(FAR struct usbdev_ep_s *ep, FAR struct usbdev_req_s *req)
 	}
 	usbc_select_active_ep(old_ep_idx);
 
-	up_irq_restore(flags);
+	leave_critical_section(flags);
 	return ret;
 }
 
@@ -1880,7 +1879,7 @@ static void usb_timer(void)
 
 static hal_irqreturn_t udc_irq_handler(void *dev_id)
 {
-	irqstate_t flags;
+	unsigned long flags = 0;
 	uint32_t old_ep_idx = 0, i = 0;
 	uint32_t usb_irq = 0, tx_irq = 0, rx_irq = 0;
 	struct sunxi_usbdev_s *priv = NULL;
@@ -1892,7 +1891,8 @@ static hal_irqreturn_t udc_irq_handler(void *dev_id)
 	}
 
 	// krhino_spin_lock_irq_save(&g_udc.lock, flags);
-	flags = up_irq_save();
+	//flags = hal_spin_lock_irqsave(&udc_lock);
+	flags = enter_critical_section();
 	is_interrupt = 1;
 
 	/* save index */
@@ -2059,7 +2059,8 @@ end:
 	usbc_select_active_ep(old_ep_idx);
 
 	// krhino_spin_unlock_irq_restore(&g_udc.lock, flags);
-	up_irq_restore(flags);
+	//hal_spin_unlock_irqrestore(&udc_lock, flags);
+	leave_critical_section(flags);
 	is_interrupt = 0;
 
 	return HAL_IRQ_OK;

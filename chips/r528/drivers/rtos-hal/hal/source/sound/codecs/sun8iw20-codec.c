@@ -76,8 +76,8 @@ static struct sunxi_codec_param default_param = {
 	.mic2gain		= 0x1f,
 	.mic3gain		= 0x1f,
 	.lineingain		= 0x0,
-#ifdef CONFIG_ARCH_BOARD_R528S3_EVB4
-	.gpio_spk		= GPIOD(15),
+#if defined(CONFIG_ARCH_BOARD_R528S3_EVB4) || defined(CONFIG_ARCH_BOARD_R528S3_GEMINI_S1)
+	.gpio_spk		= GPIOD(17),
 #elif CONFIG_ARCH_BOARD_R528S3_X4B
 	.gpio_spk		= GPIOB(2),
 #else
@@ -89,8 +89,8 @@ static struct sunxi_codec_param default_param = {
 	.adchpf_cfg     	= 1,
 	.dacdrc_cfg     	= 0,
 	.dachpf_cfg     	= 0,
-	.pb_audio_route 	= PB_AUDIO_ROUTE_LINEOUT_SPK,
-	.rx_sync_en     	= true,
+	.pb_audio_route 	= PB_AUDIO_ROUTE_LO_HP_SPK,
+	.rx_sync_en     	= false,
 	.rx_sync_ctl		= false,
 	.hp_detect_used		= false,
 };

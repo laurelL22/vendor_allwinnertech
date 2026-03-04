@@ -604,7 +604,7 @@ static int hal_gpadc_setup(hal_gpadc_t *gpadc)
     gpadc->pclk = HAL_CLK_SRC_HOSC24M;
     gpadc->mclk = HAL_CLK_PERIPH_GPADC;
 #endif
-    gpadc->mode = GP_SINGLE_MODE;
+    gpadc->mode = GP_CONTINUOUS_MODE;
 
     for (i = 0; i < gpadc->channel_num; i++)
     {

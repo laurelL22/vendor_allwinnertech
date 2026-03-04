@@ -34,7 +34,6 @@
  ****************************************************************************/
 
 #include <nuttx/config.h>
-
 #if defined(CONFIG_DRIVERS_SPI) && defined(CONFIG_SPI_DRIVER)
 #include <debug.h>
 #include <sys/param.h>
@@ -57,6 +56,9 @@
 #include <arch/board/board.h>
 
 #include "sunxi_hal_spi.h"
+
+#define SPI_FREQUENCY_40M 40000000
+#define SPI_FREQUENCY_10M 10000000
 
 /****************************************************************************
  * Pre-processor Definitions
@@ -155,7 +157,7 @@ static struct sunxi_spi_priv_s sunxi_spi0_priv =
     },
   .refs  = 0,
 };
-
+#ifdef CONFIG_LCD_SUPPORT_SSD1306
 static struct sunxi_spi_priv_s sunxi_spi1_priv =
 {
   .spi_dev =
@@ -168,11 +170,90 @@ static struct sunxi_spi_priv_s sunxi_spi1_priv =
       .cfg =
 	    {
           .flash = 0,
+          .bit_order = HAL_SPI_MASTER_MSB_FIRST,
+          .clock_frequency = SPI_MAX_FREQUENCY,
+          .cpha = HAL_SPI_MASTER_CLOCK_PHASE0,  /* SPI Mode 0: 第一个边沿采样 */
+          .cpol = HAL_SPI_MASTER_CLOCK_POLARITY0,  /* SPI Mode 0: 时钟空闲为低 */
+          .slave_port = 0,  /* CS0 */
 	    },
     },
+  .mode = SPIDEV_MODE0,  /* SPI Mode 0: CPOL=0, CPHA=0 */
+  .nbits = 8,  /* 8-bit transfers for SSD1306 */
   .refs  = 0,
 };
-
+#elif defined(CONFIG_LCD_SUPPORT_ILI9341)
+  static struct sunxi_spi_priv_s sunxi_spi1_priv =
+  {
+    .spi_dev =
+      {
+        .ops = &sunxi_spi_ops
+      },
+    .spim =
+      {
+        .port = 1,
+        .cfg =
+        {
+            .flash = 0,
+            .bit_order = HAL_SPI_MASTER_MSB_FIRST,
+            .clock_frequency = SPI_FREQUENCY_40M,
+            .cpha = HAL_SPI_MASTER_CLOCK_PHASE0,  /* SPI Mode 0: 第一个边沿采样 */
+            .cpol = HAL_SPI_MASTER_CLOCK_PHASE0,  /* SPI Mode 0: 时钟空闲为低 */
+            .slave_port = 0,  /* CS0 */
+        },
+      },
+    .refs  = 0,
+    .mode = SPIDEV_MODE0,  /* SPI Mode 0: CPOL=0, CPHA=0 */
+    .nbits = 8,  /* 8-bit transfers for SSD1306 */
+  };
+#elif defined(CONFIG_LCD_SUPPORT_ST7789)
+  static struct sunxi_spi_priv_s sunxi_spi1_priv =
+  {
+    .spi_dev =
+      {
+        .ops = &sunxi_spi_ops
+      },
+    .spim =
+      {
+        .port = 1,
+        .cfg =
+        {
+            .flash = 0,
+            .bit_order = HAL_SPI_MASTER_MSB_FIRST,
+            .clock_frequency = SPI_FREQUENCY_40M,
+            .cpha = HAL_SPI_MASTER_CLOCK_PHASE0,  /* SPI Mode 0: 第一个边沿采样 */
+            .cpol = HAL_SPI_MASTER_CLOCK_PHASE0,  /* SPI Mode 0: 时钟空闲为低 */
+            .slave_port = 0,  /* CS0 */
+        },
+      },
+    .refs  = 0,
+    .mode = SPIDEV_MODE0,  /* SPI Mode 0: CPOL=0, CPHA=0 */
+    .nbits = 8,  /* 8-bit transfers for SSD1306 */
+  };
+#else
+  static struct sunxi_spi_priv_s sunxi_spi1_priv =
+  {
+    .spi_dev =
+      {
+        .ops = &sunxi_spi_ops
+      },
+    .spim =
+      {
+        .port = 1,
+        .cfg =
+        {
+            .flash = 0,
+            .bit_order = HAL_SPI_MASTER_MSB_FIRST,
+            .clock_frequency = SPI_MAX_FREQUENCY,
+            .cpha = HAL_SPI_MASTER_CLOCK_PHASE0,  /* SPI Mode 0: 第一个边沿采样 */
+            .cpol = HAL_SPI_MASTER_CLOCK_PHASE0,  /* SPI Mode 0: 时钟空闲为低 */
+            .slave_port = 0,  /* CS0 */
+        },
+      },
+    .refs  = 0,
+    .mode = SPIDEV_MODE0,  /* SPI Mode 0: CPOL=0, CPHA=0 */
+    .nbits = 8,  /* 8-bit transfers for SSD1306 */
+  };
+#endif
 /****************************************************************************
  * Private Functions
  ****************************************************************************/
@@ -369,7 +450,6 @@ struct spi_dev_s *sunxi_spibus_initialize(int port)
       sunxi_spi_deinit(spi_dev);
 	  spi_dev = NULL;
   }
-
   return spi_dev;
 }
 

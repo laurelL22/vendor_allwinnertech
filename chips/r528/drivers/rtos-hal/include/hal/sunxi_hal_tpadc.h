@@ -64,9 +64,9 @@ typedef enum
 
 typedef enum
 {
-	DATA_X = 0,
-	DATA_Y,
+	DATA_MOVE = 0,
 	DATA_UP,
+	DATA_DOWN,
 } data_flag_t;
 
 typedef enum
@@ -78,7 +78,7 @@ typedef enum
 	TP_CH_MAX,
 } tp_channel_id;
 
-typedef int (*tpadc_usercallback_t)(uint32_t data, data_flag_t flag);
+typedef int (*tpadc_usercallback_t)(uint16_t x,uint16_t y, data_flag_t flag);
 typedef int (*tpadc_adc_usercallback_t)(uint32_t data, tp_channel_id channel);
 
 typedef struct hal_tpadc

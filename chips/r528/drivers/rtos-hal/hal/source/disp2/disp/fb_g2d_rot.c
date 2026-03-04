@@ -87,13 +87,14 @@ int fboverlay_g2d_rot_apply(struct fb_g2d_rot_t *inst, const struct fb_overlayin
 {
 	g2d_blt_h blit;
 	unsigned char *dst;
-	/*if (inst->overlay_index)
-		dst = inst->rot_dst_overlay;
-	else*/
+
 	dst = inst->rot_dst_overlay + (oinfo->yoffset / oinfo->yres) * oinfo->sarea.w * oinfo->sarea.h * 3 / 2;
-	//inst->overlay_index = (inst->overlay_index + 1) / 2;
+
 	memset(&blit, 0, sizeof(g2d_blt_h));
-	blit.flag_h = G2D_ROT_270;
+
+	// 关键修复：使用实例中的旋转标志，而不是硬编码270度
+	blit.flag_h = inst->info.flag_h;
+
 	blit.src_image_h.format = G2D_FORMAT_YUV420UVC_V1U1V0U0;
 	blit.src_image_h.mode = G2D_GLOBAL_ALPHA;
 	blit.src_image_h.alpha = 0xff;
@@ -109,8 +110,24 @@ int fboverlay_g2d_rot_apply(struct fb_g2d_rot_t *inst, const struct fb_overlayin
 	blit.dst_image_h.format = G2D_FORMAT_YUV420UVC_V1U1V0U0;
 	blit.dst_image_h.mode = G2D_GLOBAL_ALPHA;
 	blit.dst_image_h.alpha = 0xff;
+
+	// 根据旋转角度调整目标尺寸
+	switch (inst->info.flag_h) {
+	case G2D_ROT_90:
+	case G2D_ROT_270:
+		// 90度和270度旋转时，宽高互换
 	blit.dst_image_h.width = oinfo->sarea.h;
 	blit.dst_image_h.height = oinfo->sarea.w;
+		break;
+	case G2D_ROT_0:
+	case G2D_ROT_180:
+	default:
+		// 0度和180度旋转时，宽高不变
+		blit.dst_image_h.width = oinfo->sarea.w;
+		blit.dst_image_h.height = oinfo->sarea.h;
+		break;
+	}
+
 	blit.dst_image_h.laddr[0] = (__u32)dst;
 	blit.dst_image_h.laddr[1] = (__u32)(dst + oinfo->sarea.w * oinfo->sarea.h);
 	blit.dst_image_h.laddr[2] = blit.dst_image_h.laddr[1];
@@ -189,6 +206,15 @@ struct fb_g2d_rot_t *fb_g2d_rot_create(struct fb_videoinfo_s *vinfo,
 		fb_rot->info.dst_image_h.height = vinfo->yres;
 		fb_rot->info.dst_image_h.clip_rect.w = fb_rot->info.dst_image_h.width;
 		fb_rot->info.dst_image_h.clip_rect.h = fb_rot->info.dst_image_h.height;
+
+		config->info.fb.crop.width = ((long long)vinfo->xres << 32);
+		config->info.fb.crop.height = ((long long)vinfo->yres << 32);
+		config->info.fb.size[0].width = vinfo->xres;
+		config->info.fb.size[0].height = vinfo->yres;
+		config->info.fb.size[1].width = vinfo->xres;
+		config->info.fb.size[1].height = vinfo->yres;
+		config->info.fb.size[2].width = vinfo->xres;
+		config->info.fb.size[2].height = vinfo->yres;
 		break;
 	case FB_ROTATION_HW_270:
 		fb_rot->info.flag_h = G2D_ROT_270;
@@ -301,4 +327,3 @@ ERROR:
 	hal_free(fb_rot);
 	return NULL;
 }
-

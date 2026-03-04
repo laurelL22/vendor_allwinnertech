@@ -32,12 +32,21 @@
  * Included Files
  ****************************************************************************/
 
+#ifndef OPEN_MAX
+#define OPEN_MAX 256
+#endif
+#ifndef CLOCK_MAX
+#define CLOCK_MAX 4294967295U
+#endif
 #include <sys/mount.h>
 #include <nuttx/config.h>
 #include <nuttx/audio/audio.h>
 #include <nuttx/lib/modlib.h>
 #ifdef CONFIG_VIDEO_FB
 #include <nuttx/video/fb.h>
+#endif
+#ifdef CONFIG_LCD_DEV
+#include <nuttx/lcd/lcd_dev.h>
 #endif
 #ifdef CONFIG_USBADB
 #include <nuttx/usb/adb.h>
@@ -47,23 +56,22 @@
 #include <assert.h>
 
 #ifdef CONFIG_PAGING
-#  include <nuttx/page.h>
+#include <nuttx/page.h>
 #endif
 
 #include <arm_internal.h>
-
-#include "chip.h"
 #include "arm.h"
+#include "chip.h"
+#include "gic.h"
 #include "mmu.h"
 #include "scu.h"
-#include "gic.h"
 
-#include "r528_lowputc.h"
 #include "r528_boot.h"
+#include "r528_lowputc.h"
 
-#include <syslog.h>
 #include <nuttx/syslog/syslog.h>
 #include <sys/boardctl.h>
+#include <syslog.h>
 
 #if defined(CONFIG_DRIVERS_TWI)
 #include <nuttx/i2c/i2c_master.h>
@@ -80,11 +88,11 @@
 #endif
 
 #if defined(CONFIG_BOARDCTL_BOOT_IMAGE) && !defined(CONFIG_NSH_DISABLE_BOOT)
-#include <private_rtos.h>
 #include <fcntl.h>
+#include <private_rtos.h>
 #include <sys/stat.h>
-//#include <string.h>
-//#include <stdlib.h>
+// #include <string.h>
+// #include <stdlib.h>
 #endif
 
 #ifdef CONFIG_DRIVERS_CCMU
@@ -111,9 +119,15 @@ int r528_pwm_initialize(FAR const char *devpath, int channel_id);
 FAR struct i2c_master_s *r528_i2c_initialize(FAR const char *devpath, int i2c_id);
 int r528_gpadc_initialize(FAR const char *devpath, int channel_id);
 int r528_button_initialize(FAR const char *devname);
+int r528_touchscreen_initialize(FAR const char *devname);
 #ifdef CONFIG_IEEE80211_REALTEK_WIFI
 int realtek_wlan_bringup(void);
 #endif
+
+#ifdef CONFIG_MICRO_TF
+int micro_sd_initialize(void);
+#endif
+
 int r528_read_resetflag(void);
 /****************************************************************************
  * Pre-processor Definitions
@@ -533,6 +547,7 @@ int r528_disp_init(void)
 		syslog(LOG_ERR, "Failed to initialize Frame Buffer Driver.\n");
 		return ret;
 	}
+  syslog(LOG_ERR, "succese to initialize Frame Buffer Driver.\n");
 #else
 	extern int disp_probe(void);
 	disp_probe();
@@ -567,7 +582,6 @@ void arm_boot(void)
 {
 #ifndef CONFIG_ARCH_ROMPGTABLE
 	r528_setupmappings();
-	arm_lowputc('A');
 	arm_lowputc('A');
 
 	r528_vectormapping();
@@ -721,17 +735,59 @@ void r528_late_initialize(void)
 #endif
 
 #ifdef CONFIG_DRIVERS_PWM
+#ifdef LCD_SUPPORT_T070S140B
+  r528_pwm_initialize("/dev/pwm0", 4);
+#else
 	r528_pwm_initialize("/dev/pwm0", 0);
+#endif
 #endif
 
 #ifdef CONFIG_DRIVERS_TWI
-#ifdef CONFIG_SENSORS_BMI160_I2C
-	struct i2c_master_s *i2c_bus;
-	i2c_bus = r528_i2c_initialize("/dev/i2c0", 0);
-	extern int bmi160_register(FAR const char *devpath, FAR struct i2c_master_s *dev);
-	if (i2c_bus)
-		bmi160_register(0, i2c_bus);
+#ifdef CONFIG_R528_TWI0
+  unused_data struct i2c_master_s *i2c_bus0;
+  i2c_bus0 = r528_i2c_initialize("/dev/i2c0", 0);
 #endif
+#ifdef CONFIG_R528_TWI1
+  unused_data struct i2c_master_s *i2c_bus1;
+  i2c_bus1 = r528_i2c_initialize("/dev/i2c1", 1);
+#endif
+#ifdef CONFIG_R528_TWI2
+  unused_data struct i2c_master_s *i2c_bus2;
+  i2c_bus2 = r528_i2c_initialize("/dev/i2c2", 2);
+#endif
+
+#ifdef CONFIG_GT911_IIC_TOUCH
+  extern int gt911_register(FAR const char *devpath,
+                            FAR struct i2c_master_s *dev);
+  if (i2c_bus0)
+    gt911_register("/dev/input0", i2c_bus0);
+#endif
+
+#ifdef CONFIG_SENSORS_SHTC3
+  extern int shtc3_register(int devno, FAR struct i2c_master_s *i2c);
+  if (i2c_bus2) {
+    shtc3_register(0, i2c_bus2);
+  }
+#endif
+#ifdef CONFIG_SENSORS_LTR553
+  extern int ltr553_register(int devno, FAR struct i2c_master_s *i2c);
+  if (i2c_bus2) {
+    ltr553_register(0, i2c_bus2);
+  }
+#endif
+#ifdef CONFIG_SENSORS_SGP30_UORB
+  extern int sgp30_uorb_register(int devno, FAR struct i2c_master_s *i2c);
+  if (i2c_bus2) {
+    sgp30_uorb_register(0, i2c_bus2);
+  }
+#endif
+#ifdef CONFIG_SENSORS_BMI160_I2C
+  extern int bmi160_register(FAR const char *devpath,
+                             FAR struct i2c_master_s *dev);
+  if (i2c_bus2)
+    bmi160_register(0, i2c_bus2);
+#endif
+
 #endif
 
 #ifdef CONFIG_DRIVERS_GPADC
@@ -740,6 +796,10 @@ void r528_late_initialize(void)
 
 #ifdef CONFIG_DRIVERS_LRADC
 	r528_button_initialize("/dev/input/event1");
+#endif
+
+#ifdef CONFIG_DRIVERS_TPADC
+	r528_touchscreen_initialize("/dev/input0");
 #endif
 
 #ifdef CONFIG_DRIVERS_MSGBOX
@@ -827,12 +887,13 @@ void r528_late_initialize(void)
 #endif
 
 #ifdef CONFIG_SPI_DRIVER
+#if  defined(CONFIG_LCD_SSD1306_SPI_HW) || defined(CONFIG_LCD_ILI9341_HARDWARE_SPI) ||defined(CONFIG_LCD_ST7789_HARDWARE_SPI)
+extern struct spi_dev_s *sunxi_spibus_initialize(int port);
     sunxi_spibus_initialize(1);
 #endif
-
-#ifndef CONFIG_ARCH_TRUSTZONE_SECURE
-    r528_disp_init();
 #endif
+
+
 
 #ifdef CONFIG_DRIVERS_TLSC6X
     tlsc6x_init();
@@ -856,12 +917,56 @@ void r528_late_initialize(void)
 	sunxi_ce_init();
 #endif
 
+#ifdef CONFIG_DRIVERS_RC
+#if defined(CONFIG_DRIVERS_CIR_RX) || defined(CONFIG_DRIVERS_CIR_TX)
+  syslog(LOG_INFO, "r528_rc_initialize...\n");
+  extern int r528_rc_initialize(void);
+  r528_rc_initialize();
+#endif
+#endif
+
 #ifdef CONFIG_R528_PROTECT_BROM
   int r528_protect_brom(void);
   r528_protect_brom();
 #endif
-	syslog(LOG_INFO, "r528_late_initialize finish \n");
 
+#ifdef CONFIG_DRIVERS_LEDC
+#ifdef CONFIG_LED_RGB_WS2812
+    struct ws2812_dev_s *
+      r528_ws2812_setup(const char  *path,
+                        uint16_t    led_count,
+                        bool        has_white);
+    r528_ws2812_setup("dev/leds0", 1, false);
+#endif
+#endif
+
+#ifndef CONFIG_ARCH_TRUSTZONE_SECURE
+#ifdef CONFIG_LCD
+  // Initialize the LCD board
+  extern int board_lcd_initialize(void);
+  int lcd_ret = board_lcd_initialize();
+  if (lcd_ret < 0)
+  {
+    syslog(LOG_ERR, "ERROR: board_lcd_initialize() failed: %d\n", lcd_ret);
+  }
+#ifdef CONFIG_LCD_DEV
+     // Register the LCD device
+     lcd_ret = lcddev_register(0);
+     if (lcd_ret < 0)
+     {
+         syslog(LOG_ERR, "ERROR: lcddev_register() failed: %d\n", lcd_ret);
+     }
+#endif /* CONFIG_LCD_DEV */
+#else
+    r528_disp_init();
+#endif
+#endif
+
+#ifdef CONFIG_MICRO_TF
+    micro_sd_initialize();
+#endif
+
+	syslog(LOG_INFO, "r528_late_initialize finish \n");
 }
 
 #if defined(CONFIG_BOARDCTL_BOOT_IMAGE) && !defined(CONFIG_NSH_DISABLE_BOOT)

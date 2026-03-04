@@ -1,5 +1,5 @@
-DRV_GPADC_PATH=drv$(DELIM)gpadc
+DRV_GPADC_PATH=drv/gpadc
 
 ifeq ($(CONFIG_DRIVERS_GPADC), y)
-CHIP_CSRCS += $(DRV_GPADC_PATH)$(DELIM)drv_gpadc.c
+CHIP_CSRCS += $(DRV_GPADC_PATH)/drv_gpadc.c
 endif

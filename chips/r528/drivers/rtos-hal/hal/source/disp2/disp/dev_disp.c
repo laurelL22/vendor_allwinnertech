@@ -1329,7 +1329,6 @@ int disp_probe(void)
 	pm = NULL;
 	memset(&g_disp_drv, 0, sizeof(struct disp_drv_info));
 
-
 	/* iomap */
 	/* de - [device(tcon-top)] - lcd0/1/2.. - dsi */
 	counter = 0;

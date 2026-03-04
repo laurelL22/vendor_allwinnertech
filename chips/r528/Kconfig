@@ -45,6 +45,14 @@ config ARCH_HAVE_ICACHE
 
 comment "R528 Configuration Options"
 
+config ALLWINNER_BINARY_ONLY
+	bool "Use pre-compiled libraries for Allwinnertech (Hides source code)"
+	default n
+	help
+		If enabled, the build system will use libarch_allwinner.a and libboard_allwinner.a
+		instead of compiling source files in vendor/allwinnertech.
+
+
 config IMAGE_PACK_PATH
 	string "Image position to be packed"
 	default ""
@@ -109,14 +117,17 @@ config R528_IR1
 
 config R528_TWI0
 	bool "TWI 0"
+	depends on DRIVERS_TWI
 	default n
 
 config R528_TWI1
 	bool "TWI 1"
+	depends on DRIVERS_TWI
 	default n
 
 config R528_TWI2
 	bool "TWI 2"
+	depends on DRIVERS_TWI
 	default n
 
 config R528_SPI0

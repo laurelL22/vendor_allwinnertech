@@ -1,8 +1,8 @@
 
-COMMON_PATH=$(DRV_SOURCE_PATH)$(DELIM)sound$(DELIM)common
+COMMON_PATH=$(DRV_SOURCE_PATH)/sound/common
 
 DEPPATH+=--dep-path $(COMMON_PATH)
-VPATH+=:chip$(DELIM)$(COMMON_PATH)
+VPATH+=:chip/$(COMMON_PATH)
 
 ifeq ($(CONFIG_SND_COMMON_SUNXI_COMMON),y)
 # Include platform's table.
@@ -10,7 +10,7 @@ ifeq ($(CONFIG_SND_COMMON_SUNXI_COMMON),y)
 
 # Include the  module.
 # Soundcards Register Select
-CHIP_CSRCS += $(COMMON_PATH)$(DELIM)snd_sunxi_common.c
+CHIP_CSRCS += $(COMMON_PATH)/snd_sunxi_common.c
 
 endif
 
@@ -20,7 +20,7 @@ ifeq ($(CONFIG_SND_SOC_SUNXI_RXSYNC),y)
 
 # Include the  module.
 # Soundcards Register Select
-CHIP_CSRCS += $(COMMON_PATH)$(DELIM)snd_sunxi_rxsync.c
+CHIP_CSRCS += $(COMMON_PATH)/snd_sunxi_rxsync.c
 
 endif
 
@@ -31,6 +31,6 @@ ifeq ($(CONFIG_SND_COMMON_SUNXI_ALG_CFG),y)
 
 # Include the  module.
 # Soundcards Register Select
-CHIP_CSRCS += $(COMMON_PATH)$(DELIM)snd_sunxi_alg_cfg.c
+CHIP_CSRCS += $(COMMON_PATH)/snd_sunxi_alg_cfg.c
 
 endif

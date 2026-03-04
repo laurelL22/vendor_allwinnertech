@@ -49,16 +49,16 @@ typedef struct pwm_gpio_t
 static pwm_gpio_t pwm_gpio[PWM_NUM] =
 {
     {
-        .pwm_pin = GPIO_PB12,
-        .pwm_function = 3,
+        .pwm_pin = GPIO_PD16,
+        .pwm_function = 5,
     },
     {
         .pwm_pin = GPIO_PD2,
         .pwm_function = 3,
     },
     {
-        .pwm_pin = GPIO_PE0,
-        .pwm_function = 3,
+        .pwm_pin = GPIO_PE8,
+        .pwm_function = 4,
     },
     {
         .pwm_pin = GPIO_PD4,

@@ -34,6 +34,14 @@ config LCD_SUPPORT_ILI9341
 	---help---
 		If you want to support ili9341 panel for display driver, select it.
 
+if LCD_SUPPORT_ILI9341
+config LCD_ILI9341_HARDWARE_SPI
+    bool "Use hardware SPI for ili9341"
+	default y
+    ---help---
+      If you want to Use hardware SPI for ili9341, select it.
+endif
+
 config LCD_SUPPORT_LH219WQ1
 	bool "LCD support LH219WQ1 panel"
 	default n
@@ -90,6 +98,20 @@ config LCD_SUPPORT_ST7789V
 	default n
 	---help---
 		If you want to support ST7789V panel for display driver, select it.
+
+config LCD_SUPPORT_ST7789
+	bool "LCD support ST7789 panel"
+	default n
+	---help---
+		If you want to support ST7789 panel for display driver, select it.
+
+if LCD_SUPPORT_ST7789
+config LCD_ST7789_HARDWARE_SPI
+    bool "Use hardware SPI for st7789"
+	default y
+    ---help---
+      If you want to Use hardware SPI for st7789, select it.
+endif
 
 config LCD_SUPPORT_ST7796S
 	bool "LCD support ST7796S panel"
@@ -194,5 +216,37 @@ config LCD_SUPPORT_GC9503CV
 	default n
 	---help---
 		If you want to support b080uan01 mipi 1200x1920 panel for display driver, select it.
+config LCD_SUPPORT_T070S140B
+    bool "LCD support T070S140B panel"
+	select FB_UPDATE
+    default n
+    ---help---
+      If you want to Support  T070S140B mipi 1024x600  panel for display driver, select it.
+config LCD_SUPPORT_SSD1306
+    bool "LCD support SSD1306 panel"
+    default n
+    ---help---
+      If you want to Support  SSD1306 panel for display driver, select it.
 
+if LCD_SUPPORT_SSD1306
 
+choice
+prompt "Select SPI interface type for SSD1306"
+default LCD_SSD1306_SPI_HW
+
+config LCD_SSD1306_SPI_HW
+    bool "Use hardware SPI for SSD1306"
+    ---help---
+      If you want to Use hardware SPI for SSD1306, select it.
+config LCD_SSD1306_SPI_SW
+    bool "Use software SPI for SSD1306"
+    ---help---
+      If you want to Use software SPI for SSD1306, select it.
+endchoice
+
+config LCD_SSD1306_TEST
+    bool "test for SSD1306"
+    default n
+    ---help---
+      If you want to test SSD1306 panel for display driver, select it.
+endif # LCD_SUPPORT_SSD1306

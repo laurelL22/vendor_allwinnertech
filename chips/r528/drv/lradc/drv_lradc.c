@@ -106,14 +106,16 @@ static btn_buttonset_t r528_bl_buttons(FAR const struct btn_lowerhalf_s *lower)
 	retval = hal_lradc_get_data();
 	syslog(LOG_INFO,"r528_bl_buttons:retval:%lu\n",retval);
 	if (HW_VERSION_DVT3 == g_hw_version) {
-		if(retval>=32 && retval<=36)
+		if(retval>=8 && retval<=12)
 			ret = BUTTON_1;
-		else if(retval>=40 && retval<=44)
-			ret = BUTTON_2;
-		else if(retval>=22 && retval<=26)
+		else if(retval>=32 && retval<=36)
 			ret = BUTTON_4;
-		else if(retval<=16)
+		else if(retval>=40 && retval<=44)
+			ret = BUTTON_5;
+		else if(retval>=24 && retval<=28)
 			ret = BUTTON_3;
+		else if(retval>=16 && retval<=20)
+			ret = BUTTON_2;
 	} else {
 		if(retval>=8 && retval<=12)
 			ret = BUTTON_1;
@@ -155,13 +157,15 @@ static void lradc_irq_callback(uint32_t irq_status, uint32_t data)
 	uint32_t notify_data = 0;
 	if (HW_VERSION_DVT3 == g_hw_version) { //DVT3
 		if(data>=32 && data<=36)
-			notify_data = BUTTON_1;
-		else if(data>=40 && data<=44)
-			notify_data = BUTTON_2;
-		else if(data>=22 && data<=26)
 			notify_data = BUTTON_4;
-		else if(data<=16)
+		else if(data>=40 && data<=44)
+			notify_data = BUTTON_5;
+		else if(data>=24 && data<=28)
 			notify_data = BUTTON_3;
+		else if(data>=16 && data<=20)
+			notify_data = BUTTON_2;
+		else if(data>=8 && data<=12)
+			notify_data = BUTTON_1;
 	} else { //DVT1 DVT2
 		if(data>=8 && data<=12)
 			notify_data = BUTTON_1;

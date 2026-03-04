@@ -52,7 +52,6 @@ config SSD1306_SPI
 	default n
 	---help---
 	  board, disp with SSD1306 SPI 128x64 panel
-
 endmenu
 
 menu "Soc Select"

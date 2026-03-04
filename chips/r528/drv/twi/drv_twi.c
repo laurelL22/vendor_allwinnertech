@@ -37,6 +37,7 @@
 #include <debug.h>
 
 #include <nuttx/irq.h>
+#include <nuttx/kmalloc.h>
 #include <nuttx/clock.h>
 #include <nuttx/i2c/i2c_master.h>
 #include <arch/board/board.h>
@@ -90,7 +91,7 @@ static int r528_transfer(FAR struct i2c_master_s *lower,
 {
   FAR struct sunxi_i2c_lowerhalf_s *priv = (FAR struct sunxi_i2c_lowerhalf_s *)lower;
 
-  wdinfo("Entry\n");
+  i2cinfo("Entry\n");
   DEBUGASSERT(priv);
 
   struct twi_msg *twi_msgs = (struct twi_msg *)kmm_malloc(count * sizeof(struct twi_msg));
@@ -133,7 +134,7 @@ FAR struct i2c_master_s *r528_i2c_initialize(FAR const char *devpath, int i2c_id
   FAR struct sunxi_i2c_lowerhalf_s *priv = &g_i2cdev[i2c_id];
   FAR int handle;
 
-  wdinfo("Entry: devpath=%s\n", devpath);
+  i2cinfo("Entry: devpath=%s\n", devpath);
 
   priv->twi_port = i2c_id;
   priv->i2c_s.ops = &g_i2cops;
@@ -143,10 +144,10 @@ FAR struct i2c_master_s *r528_i2c_initialize(FAR const char *devpath, int i2c_id
   handle = i2c_register((FAR struct i2c_master_s *)priv, i2c_id);
 
   if (!handle) {
-      wdinfo("i2c%d init success!\n", i2c_id);
+      i2cinfo("i2c%d init success!\n", i2c_id);
       return (FAR struct i2c_master_s *)priv;
   } else {
-      wdinfo("i2c%d register faile\n", i2c_id);
+      i2cinfo("i2c%d register faile\n", i2c_id);
       return NULL;
   }
 }

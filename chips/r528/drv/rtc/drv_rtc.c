@@ -62,6 +62,14 @@ struct sunxi_rtc_lowerhalf_s
 	void *alarm_data;
 	int rtc_id;
 	void *arg;
+	/* Periodic interrupt support */
+#ifdef CONFIG_RTC_PERIODIC
+	bool periodic_enabled;
+	int periodic_id;
+	struct timespec periodic_interval;  /* Changed from itimerspec to timespec */
+	rtc_alarm_callback_t periodic_callback;
+	void *periodic_data;
+#endif
 };
 /* "Lower half" driver methods **********************************************/
 
@@ -85,6 +93,94 @@ static int r528_rdalarm(FAR struct rtc_lowerhalf_s *lower,
 static int r528_ioctl(FAR struct rtc_lowerhalf_s *lower, int cmd, unsigned long arg);
 #endif
 
+/* Forward declaration for callback */
+void vela_rtc_callback(void *param);
+
+#ifdef CONFIG_RTC_PERIODIC
+/* Function declarations */
+static int r528_setperiodic(FAR struct rtc_lowerhalf_s *lower,
+                             FAR const struct lower_setperiodic_s *periodic_info);
+static int r528_cancelperiodic(FAR struct rtc_lowerhalf_s *lower, int periodic_id);
+
+/* Function implementations */
+static int r528_setperiodic(FAR struct rtc_lowerhalf_s *lower,
+                             FAR const struct lower_setperiodic_s *periodic_info)
+{
+  FAR struct sunxi_rtc_lowerhalf_s *priv = (FAR struct sunxi_rtc_lowerhalf_s *)lower;
+  int ret = 0;
+  uint32_t delay_sec;
+
+  DEBUGASSERT(priv && periodic_info);
+
+  /* Cancel any existing periodic interrupt */
+  if (priv->periodic_enabled)
+  {
+    ret = r528_cancelperiodic(lower, priv->periodic_id);
+    if (ret != OK)
+    {
+      return ret;
+    }
+  }
+
+  /* Save periodic interrupt configuration */
+  priv->periodic_id = periodic_info->id;
+  priv->periodic_interval = periodic_info->period;
+  priv->periodic_callback = periodic_info->cb;
+  priv->periodic_data = periodic_info->priv;
+
+  /* Calculate delay in seconds with higher precision */
+  uint64_t total_nsec = (uint64_t)priv->periodic_interval.tv_sec * 1000000000ULL + priv->periodic_interval.tv_nsec;
+  delay_sec = (uint32_t)(total_nsec / 1000000000ULL);
+  if (total_nsec % 1000000000ULL > 0) {
+    delay_sec += 1;
+  }
+
+  /* Register the callback */
+  if (hal_rtc_register_callback_with_data(vela_rtc_callback, (void*)priv))
+  {
+    wdinfo("Failed to register periodic callback\n");
+    return -1;
+  }
+
+  /* Set the initial alarm */
+  if (hal_rtc_set_relative_alarm(delay_sec))
+  {
+    wdinfo("Failed to set initial periodic alarm\n");
+    return -1;
+  }
+
+  /* Enable periodic interrupts */
+  priv->periodic_enabled = true;
+  hal_rtc_alarm_irq_enable(1);
+
+  return OK;
+}
+
+static int r528_cancelperiodic(FAR struct rtc_lowerhalf_s *lower, int periodic_id)
+{
+  FAR struct sunxi_rtc_lowerhalf_s *priv = (FAR struct sunxi_rtc_lowerhalf_s *)lower;
+
+  DEBUGASSERT(priv);
+
+  if (priv->periodic_enabled && priv->periodic_id == periodic_id)
+  {
+    /* Cancel the current alarm */
+    if (hal_rtc_cancel_alarm())
+    {
+      wdinfo("Failed to cancel periodic alarm\n");
+      return -1;
+    }
+
+    /* Disable periodic interrupts */
+    priv->periodic_enabled = false;
+    priv->periodic_callback = NULL;
+    priv->periodic_data = NULL;
+  }
+
+  return OK;
+}
+#endif
+
 /****************************************************************************
  * Private Data
  ****************************************************************************/
@@ -98,6 +194,10 @@ static const struct rtc_ops_s g_rtcops =
   .setrelative  = r528_setrelative,
   .cancelalarm  = r528_cancelalarm,
   .rdalarm      = r528_rdalarm,
+#endif
+#ifdef CONFIG_RTC_PERIODIC
+  .setperiodic  = r528_setperiodic,
+  .cancelperiodic = r528_cancelperiodic,
 #endif
 #ifdef CONFIG_RTC_IOCTL
   .ioctl        = r528_ioctl,
@@ -114,8 +214,38 @@ static struct sunxi_rtc_lowerhalf_s g_rtcdev;
 void vela_rtc_callback(void *param)
 {
   FAR struct sunxi_rtc_lowerhalf_s *cb_priv = (FAR struct sunxi_rtc_lowerhalf_s *)param;
+
   if (cb_priv->alarm_callback)
+  {
     cb_priv->alarm_callback(cb_priv->alarm_data, cb_priv->rtc_id);
+  }
+
+  /* Handle periodic interrupts */
+#ifdef CONFIG_RTC_PERIODIC
+  if (cb_priv->periodic_enabled && cb_priv->periodic_callback)
+  {
+    /* Call the periodic callback */
+    cb_priv->periodic_callback(cb_priv->periodic_data, cb_priv->periodic_id);
+
+    /* Set the next periodic alarm with higher precision */
+    uint64_t total_nsec = (uint64_t)cb_priv->periodic_interval.tv_sec * 1000000000ULL + cb_priv->periodic_interval.tv_nsec;
+    uint32_t next_delay = (uint32_t)(total_nsec / 1000000000ULL);
+    if (total_nsec % 1000000000ULL > 0) {
+      next_delay += 1;
+    }
+    if (hal_rtc_set_relative_alarm(next_delay))
+    {
+      wdinfo("Failed to set next periodic alarm\n");
+      cb_priv->periodic_enabled = false;
+    }
+  }
+  else
+#endif
+  {
+    /* Disable alarm for one-shot alarms to avoid repeated triggers */
+    hal_rtc_alarm_irq_enable(0);
+    hal_rtc_cancel_alarm();
+  }
 }
 
 /****************************************************************************
@@ -125,11 +255,13 @@ static int r528_rdtime(FAR struct rtc_lowerhalf_s *lower,
                        FAR struct rtc_time *rtctime)
 {
   FAR struct sunxi_rtc_lowerhalf_s *priv = (FAR struct sunxi_rtc_lowerhalf_s *)lower;
+
   DEBUGASSERT(priv);
 
   if(hal_rtc_gettime(priv->config_time))
     return -1;
 
+  /* Copy RTC time to output */
   rtctime->tm_sec = priv->config_time->tm_sec;
   rtctime->tm_min = priv->config_time->tm_min;
   rtctime->tm_hour = priv->config_time->tm_hour;
@@ -139,6 +271,9 @@ static int r528_rdtime(FAR struct rtc_lowerhalf_s *lower,
   rtctime->tm_wday = hal_rtc_convert_wday(priv->config_time);
   rtctime->tm_yday = hal_rtc_convert_yday(priv->config_time);
   rtctime->tm_isdst = 0;
+
+  /* Apply software compensation to improve accuracy - temporarily disabled */
+  /* Original compensation code removed due to nested comment issues */
 
   return OK;
 }
@@ -285,6 +420,15 @@ int up_rtc_initialize(void)
   priv->wkalarm =(struct rtc_wkalrm *)hal_malloc(sizeof(struct rtc_wkalrm));
   memset(priv->config_time, 0, sizeof(struct sunxi_rtc_time));
   memset(priv->wkalarm, 0, sizeof(struct rtc_wkalrm));
+
+  /* Initialize periodic interrupt variables */
+#ifdef CONFIG_RTC_PERIODIC
+  priv->periodic_enabled = false;
+  priv->periodic_id = -1;
+  memset(&priv->periodic_interval, 0, sizeof(struct timespec));
+  priv->periodic_callback = NULL;
+  priv->periodic_data = NULL;
+#endif
 
   handle = rtc_initialize(0, (FAR struct rtc_lowerhalf_s *)priv);
 

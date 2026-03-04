@@ -15,7 +15,7 @@
 #
 
 config SHOW_LOGO
-	tristate "show logo!"
+	bool "show logo!"
 	default n
 	---help---
 		Enable showlogo program

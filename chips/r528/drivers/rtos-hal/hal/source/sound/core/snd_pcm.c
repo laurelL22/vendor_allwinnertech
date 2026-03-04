@@ -1064,12 +1064,12 @@ static int snd_pcm_lib_write_transfer(struct snd_pcm_substream *substream,
 			return ret;
 	} else {
 		char *hwbuf = (char *)(runtime->dma_addr + frames_to_bytes(runtime, hwoff));
-		snd_print("hwbuf:%p, bytes:%lu, frames:%lu\n",
+		snd_print("hwbuf:%p, bytes:%zd, frames:%lu\n",
 				hwbuf,
 				frames_to_bytes(runtime, frames),
 				frames);
 		memcpy(hwbuf, buf, frames_to_bytes(runtime, frames));
-		snd_print("start:0x%x, end:0x%x, bytes:0x%x\n",
+		snd_print("start:%p, end:%p, bytes:0x%x\n",
 			hwbuf, hwbuf+frames_to_bytes(runtime, frames),
 			frames_to_bytes(runtime, frames));
 		/* flush cache */
@@ -1158,7 +1158,7 @@ static snd_pcm_sframes_t snd_pcm_lib_write(struct snd_pcm_substream *substream,
 		if (appl_ptr >= runtime->boundary)
 			appl_ptr -= runtime->boundary;
 		runtime->control->appl_ptr = appl_ptr;
-		snd_print("appl_ptr:0x%x\n", appl_ptr);
+		snd_print("appl_ptr:0x%lx\n", appl_ptr);
 
 		offset += frames;
 		size -= frames;
@@ -1198,7 +1198,7 @@ static int snd_pcm_lib_read_transfer(struct snd_pcm_substream *substream,
 			return err;
 	} else {
 		char *hwbuf = (char *)(runtime->dma_addr + frames_to_bytes(runtime, hwoff));
-		snd_print("hwbuf:%p, bytes:%lu, frames:%lu\n",
+		snd_print("hwbuf:%p, bytes:%zd, frames:%lu\n",
 				hwbuf,
 				frames_to_bytes(runtime, frames),
 				frames);

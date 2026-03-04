@@ -52,8 +52,6 @@ NXFLATLDFLAGS1 = -r -d -warn-common
 NXFLATLDFLAGS2 = $(NXFLATLDFLAGS1) -T$(TOPDIR)$(DELIM)binfmt$(DELIM)libnxflat$(DELIM)gnu-nxflat-pcrel.ld -no-check-sections
 LDNXFLATFLAGS = -e main -s 2048
 
-#LDFLAGS += -v --verbose --trace
-
 ifeq ($(CONFIG_SERVICES_PNS),y)
   PRODUCT_NAME := ${shell echo $(CONFIG_PNS_PRODUCT_SERIES) |sed -e "s/\"//g"}
   PNS_BASE_DIR = $(TOPDIR)/../vendor/xiaomi/miai/pns/thirdparty/$(PRODUCT_NAME)
@@ -92,7 +90,6 @@ ifeq ($(CONFIG_SERVICES_PNS),y)
   endif # CONFIG_PNS_LIBMDSPEECH_ENABLE
 endif # CONFIG_SERVICES_PNS
 
-#EXTRA_LIBPATHS += -L "/data/openvela0729/vendor/allwinnertech/boards/r528/r528s3-evb4/libs/bl"
 EXTRA_LIBS += $(wildcard $(shell readlink -f $(TOPDIR)/$(CONFIG_ARCH_BOARD_CUSTOM_DIR)/libs/$(CONFIG_ARCH_BOARD_CUSTOM_NAME))/*.a)
 
 ifeq ($(CONFIG_IEEE80211_REALTEK_WIFI_RTL8733BS),y)

@@ -2,17 +2,17 @@ ifeq ($(CONFIG_DRIVERS_SOUND),y)
 # Include platform's table.
 # Include build support
 
-include $(wildcard $(AW_SRCDIR)$(DELIM)drivers$(DELIM)rtos-hal$(DELIM)hal$(DELIM)source$(DELIM)sound$(DELIM)*$(DELIM)Make.defs)
-# include $(AW_SRCDIR)$(DELIM)drivers$(DELIM)rtos-hal$(DELIM)hal$(DELIM)source$(DELIM)Make.defs
+include $(wildcard $(AW_SRCDIR)/drivers/rtos-hal/hal/source/sound/*/Make.defs)
+# include $(AW_SRCDIR)/drivers/rtos-hal/hal/source/Make.defs
 
-SOUND_PATH=$(DRV_SOURCE_PATH)$(DELIM)sound
+SOUND_PATH=$(DRV_SOURCE_PATH)/sound
 
 DEPPATH+=--dep-path $(SOUND_PATH)
-VPATH+=:chip$(DELIM)$(SOUND_PATH)
+VPATH+=:chip/$(SOUND_PATH)
 
 # Include the  module.
 # Soundcards Register Select
-CHIP_CSRCS += $(SOUND_PATH)$(DELIM)card_default.c
+CHIP_CSRCS += $(SOUND_PATH)/card_default.c
 
 endif
 

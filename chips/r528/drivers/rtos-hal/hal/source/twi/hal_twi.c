@@ -50,8 +50,16 @@
 #endif
 
 #undef TWI_ERR
+#ifdef CONFIG_DEBUG_I2C
+#ifdef CONFIG_DEBUG_I2C_INFO
+#define TWI_ERR(x...) i2cinfo("[twi_err]: " x)
+#else
 #include <syslog.h>
 #define TWI_ERR(x...) syslog(LOG_ERR, "[twi_err]: " x)
+#endif
+#else
+#define TWI_ERR(x...) _none(x)
+#endif
 
 static const uint32_t hal_twi_address[] =
 {
@@ -2132,7 +2140,7 @@ static twi_status_t hal_twi_regulator_exit(hal_twi_t *twi)
     int ret;
 
     enum REGULATOR_ID_ENUM regulator_id = twi_regulator_id[twi->port];
-    
+
 	if (regulator_id == AXP2101_ID_MAX)
     {
         TWI_INFO("[twi%d] needn't to exit regulator", twi->port);

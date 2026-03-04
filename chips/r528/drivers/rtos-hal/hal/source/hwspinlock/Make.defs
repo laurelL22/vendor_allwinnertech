@@ -1,5 +1,5 @@
-HWSPINLOCK_PATH=drivers$(DELIM)rtos-hal$(DELIM)hal$(DELIM)source$(DELIM)hwspinlock
+HWSPINLOCK_PATH=drivers/rtos-hal/hal/source/hwspinlock
 
 ifeq ($(CONFIG_DRIVERS_HWSPINLOCK), y)
-CHIP_CSRCS += $(HWSPINLOCK_PATH)$(DELIM)hal_hwspinlock.c
+CHIP_CSRCS += $(HWSPINLOCK_PATH)/hal_hwspinlock.c
 endif

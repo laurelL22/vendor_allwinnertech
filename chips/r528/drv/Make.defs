@@ -31,4 +31,6 @@
 #  OF THE POSSIBILITY OF SUCH DAMAGE.
 ############################################################################
 
-include $(wildcard $(AW_SRCDIR)$(DELIM)drv$(DELIM)*$(DELIM)Make.defs)
+ifneq ($(CONFIG_ALLWINNER_BINARY_ONLY),y)
+include $(wildcard $(AW_SRCDIR)/drv/*/Make.defs)
+endif

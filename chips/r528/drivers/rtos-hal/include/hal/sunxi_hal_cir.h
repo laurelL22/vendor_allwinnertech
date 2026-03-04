@@ -115,14 +115,14 @@ extern "C"
 #define ATHC			(0x01 << ATHC_OFFSET)	/*active threshold control for cir*/
 #define SCS2			(0x01 << SCS2_OFFSET)	/*bit2 of sample clock select for cir*/
 
-#define CIR_NOISE_THR_NEC	32
+#define CIR_NOISE_THR_NEC	15
 #define CIR_NOISE_THR_RC5	22
 
 /* Idle Threshold = (11+1)*128clock*10.7us = 16ms > 9ms */
 #define RXIDLE_VAL		(11)
 
 /* Active Threshold (1+1)*128clock*10.7us = 2.6ms */
-#define ACTIVE_T_SAMPLE		(32)
+#define ACTIVE_T_SAMPLE		(20)
 
 typedef enum {
    CIR_MASTER_0 = 0,

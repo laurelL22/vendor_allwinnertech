@@ -1,3 +1,8 @@
+/* SPDX-License-Identifier: GPL-2.0 */
+/*
+ * Copyright (c) 2020 frank@allwinnertech.com
+ */
+
 #ifndef _CCU_SUN8IW20_H_
 #define _CCU_SUN8IW20_H_
 

@@ -486,14 +486,18 @@ static inline void r528_uart0config(void)
   flags = enter_critical_section();
   sunxi_clock_init_uart(0);
 
-#if defined(CONFIG_ARCH_BOARD_R528S3_EVB4) || defined(CONFIG_ARCH_BOARD_R528S3_VELAEVB1)
+#if defined(CONFIG_ARCH_BOARD_R528S3_EVB4)
 	#define UART0_TX		GPIOB(0)
 	#define UART0_RX		GPIOB(1)
 	#define UART0_GPIO_FUNCTION	(6)
-#else
+#elif defined(CONFIG_ARCH_BOARD_R528S3_GEMINI_S1)
 	#define UART0_TX		GPIOF(2)
 	#define UART0_RX		GPIOF(4)
 	#define UART0_GPIO_FUNCTION	(3)
+#else
+	#define UART0_TX		GPIOB(0)
+	#define UART0_RX		GPIOB(1)
+	#define UART0_GPIO_FUNCTION	(6)
 #endif
 
   hal_gpio_pinmux_set_function_early(R528_GPIO_VADDR, UART0_TX, UART0_GPIO_FUNCTION);

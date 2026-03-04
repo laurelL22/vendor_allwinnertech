@@ -2,19 +2,19 @@ ifeq ($(CONFIG_DRIVERS_TWI),y)
 # Include platform's table.
 # Include build support
 
-DRV_SOURCE_PATH=drivers$(DELIM)rtos-hal$(DELIM)hal$(DELIM)source
-TWI_PATH=drivers$(DELIM)rtos-hal$(DELIM)hal$(DELIM)source$(DELIM)twi
+DRV_SOURCE_PATH=drivers/rtos-hal/hal/source
+TWI_PATH=drivers/rtos-hal/hal/source/twi
 
 DEPPATH+=--dep-path $(TWI_PATH)
-VPATH+=:chip$(DELIM)$(TWI_PATH)
+VPATH+=:chip/$(TWI_PATH)
 
-ARCH_TWI_SRC_PATH:=$(ARCH_SRC)$(DELIM)chip$(DELIM)$(TWI_PATH)
+ARCH_TWI_SRC_PATH:=$(ARCH_SRC)/chip/$(TWI_PATH)
 
 CFLAGS += ${INCDIR_PREFIX}$(ARCH_TWI_SRC_PATH)
-CFLAGS += ${INCDIR_PREFIX}$(ARCH_TWI_SRC_PATH)$(DELIM)platform
+CFLAGS += ${INCDIR_PREFIX}$(ARCH_TWI_SRC_PATH)/platform
 
 # Include the  module.
-CHIP_CSRCS += $(TWI_PATH)$(DELIM)hal_twi.c
+CHIP_CSRCS += $(TWI_PATH)/hal_twi.c
 
 endif
 

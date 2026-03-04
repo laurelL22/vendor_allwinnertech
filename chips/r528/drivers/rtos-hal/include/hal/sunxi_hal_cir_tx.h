@@ -73,7 +73,7 @@
 #define IR_TX_FIFO_SIZE		(128)
 
 #define	IR_TX_RAW_BUF_SIZE	(256)
-#define IR_TX_CYCLE_TYPE	(0)	/* 1:cycle 0:non-cycle */
+#define IR_TX_CYCLE_TYPE	(1)	/* 1:cycle 0:non-cycle */
 #define IR_TX_CLK_Ts		(1)
 
 #define SUNXI_IR_TX_VERSION "v1.0.0"
@@ -148,7 +148,7 @@ struct cir_tx_raw_buffer {
 	unsigned char tx_buf[IR_TX_RAW_BUF_SIZE];
 };
 
-cir_tx_status_t hal_cir_tx_init(struct sunxi_cir_tx_t *cir_tx);
+cir_tx_status_t hal_cir_tx_init(struct sunxi_cir_tx_t **cir_tx_ptr);
 void hal_cir_tx_set_duty_cycle(int duty_cycle);
 void hal_cir_tx_set_carrier(int carrier_freq);
 void hal_cir_tx_xmit(unsigned int *txbuf, unsigned int count);
@@ -157,3 +157,4 @@ void hal_cir_tx_xmit(unsigned int *txbuf, unsigned int count);
 #define IR_TX_IOCSEND _IOR(66, 1, struct cmd)
 
 #endif /* _SUNXI_IR_TX_H */
+

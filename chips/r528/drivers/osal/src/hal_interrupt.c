@@ -46,12 +46,12 @@ uint32_t hal_interrupt_get_nest(void)
 
 unsigned long hal_interrupt_disable_irqsave(void)
 {
-    return (unsigned long)up_irq_save();
+    return (unsigned long)enter_critical_section();
 }
 
 void hal_interrupt_enable_irqrestore(unsigned long flag)
 {
-	up_irq_restore((irqstate_t)flag);
+	leave_critical_section(flag);
 }
 
 unsigned long hal_interrupt_is_disable(void)
@@ -64,22 +64,4 @@ unsigned long hal_interrupt_is_disable(void)
 
 void hal_interrupt_init(void)
 {
-}
-
-#ifdef enter_critical_section
-#undef enter_critical_section
-#endif
-
-#ifdef leave_critical_section
-#undef leave_critical_section
-#endif
-
-irqstate_t enter_critical_section(void)
-{
-	return up_irq_save();
-}
-
-void leave_critical_section(irqstate_t flag)
-{
-	up_irq_restore(flag);
 }

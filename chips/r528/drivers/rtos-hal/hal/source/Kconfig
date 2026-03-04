@@ -23,3 +23,5 @@ source '../vendor/allwinnertech/chips/r528/drivers/rtos-hal/hal/source/sensor/Kc
 source '../vendor/allwinnertech/chips/r528/drivers/rtos-hal/hal/source/ce/Kconfig'
 source '../vendor/allwinnertech/chips/r528/drivers/rtos-hal/hal/source/hwspinlock/Kconfig'
 source '../vendor/allwinnertech/chips/r528/drivers/rtos-hal/hal/source/ledc/Kconfig'
+source '../vendor/allwinnertech/chips/r528/drivers/rtos-hal/hal/source/cir_rx/Kconfig'
+source '../vendor/allwinnertech/chips/r528/drivers/rtos-hal/hal/source/cir_tx/Kconfig'

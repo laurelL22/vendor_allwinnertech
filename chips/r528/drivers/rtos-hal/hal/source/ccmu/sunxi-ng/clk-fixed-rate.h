@@ -1,3 +1,8 @@
+/* SPDX-License-Identifier: GPL-2.0 */
+/*
+ * Copyright (c) 2020 shengduiliang@allwinnertech.com
+ */
+
 #ifndef _CLK_FIXED_RATE_H
 #define _CLK_FIXED_RATE_H
 

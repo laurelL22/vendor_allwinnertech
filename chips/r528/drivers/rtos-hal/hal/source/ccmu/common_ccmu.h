@@ -106,11 +106,7 @@ typedef enum
     HAL_SUNXI_CCU_NUMBER,
 } hal_clk_type_t;
 
-//#include "sunxi-ng/clk.h"
-#include "sunxi-ng/ccu-sun8iw20.h"
-#include "sunxi-ng/rst-sun8iw20.h"
-#include "sunxi-ng/clk-fixed-rate.h"
-#include "sunxi-ng/ccu-sun8iw20-r.h"
+#include "sunxi-ng/clk.h"
 typedef struct clk* hal_clk_t;
 
 #endif

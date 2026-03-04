@@ -49,7 +49,4 @@ define POSTBUILD
 	elif [ "x$(CONFIG_ARCH_BOARD_CUSTOM_NAME)" = "xbl" ]; then \
 		cp -v ${TOPDIR}/nuttx.bin $$VELA_ELF; \
 	fi
-	$(STRIP) --remove-section=.note.gnu.build-id ${TOPDIR}/nuttx
-	arm-none-eabi-objcopy -v -O binary ${TOPDIR}/nuttx ${TOPDIR}/nuttx.bin
-	cp -v ${TOPDIR}/nuttx.bin $(CONFIG_IMAGE_PACK_PATH)
 endef

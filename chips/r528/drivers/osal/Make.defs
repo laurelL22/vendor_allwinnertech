@@ -31,5 +31,5 @@
 #  OF THE POSSIBILITY OF SUCH DAMAGE.
 ############################################################################
 
-include $(AW_SRCDIR)$(DELIM)drivers$(DELIM)osal$(DELIM)src$(DELIM)Make.defs
+include $(AW_SRCDIR)/drivers/osal/src/Make.defs
 

@@ -4,10 +4,10 @@
 #
 
 config BTN_RST_MON
-  tristate "Reset Button Monitor"
-  default n
-  ---help---
-    Enable Reset Button Monitor Program
+	bool "Reset Button Monitor"
+	default n
+	---help---
+	Enable Reset Button Monitor Program
 
 if BTN_RST_MON
 

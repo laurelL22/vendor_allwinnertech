@@ -33,7 +33,8 @@
 #
 ############################################################################
 
--include $(APPDIR)/Make.defs
+include $(APPDIR)/Make.defs
+include $(APPDIR)/vendor/allwinnertech/Common.mk
 
 #include $(APPDIR)/../nuttx/arch/arm/src/armv7-a/Make.defs
 

@@ -1,49 +1,42 @@
 ifeq ($(CONFIG_DRIVERS_USB),y)
 
-DRV_SOURCE_PATH=drivers$(DELIM)rtos-hal$(DELIM)hal$(DELIM)source
-USB_PATH=drivers$(DELIM)rtos-hal$(DELIM)hal$(DELIM)source$(DELIM)usb
+DRV_SOURCE_PATH=drivers/rtos-hal/hal/source
+USB_PATH=drivers/rtos-hal/hal/source/usb
 
 DEPPATH+=--dep-path $(USB_PATH)
-VPATH+=:chip$(DELIM)$(USB_PATH)
+VPATH+=:chip/$(USB_PATH)
 
-ARCH_USB_SRC_PATH:=$(ARCH_SRC)$(DELIM)chip$(DELIM)$(USB_PATH)
+ARCH_USB_SRC_PATH:=$(ARCH_SRC)/chip/$(USB_PATH)
 
 CFLAGS += ${INCDIR_PREFIX}$(ARCH_USB_SRC_PATH)
-CFLAGS += ${INCDIR_PREFIX}$(ARCH_USB_SRC_PATH)$(DELIM)include
-CFLAGS += ${INCDIR_PREFIX}$(ARCH_USB_SRC_PATH)$(DELIM)common
-CFLAGS += ${INCDIR_PREFIX}$(ARCH_USB_SRC_PATH)$(DELIM)sun20iw1
+CFLAGS += ${INCDIR_PREFIX}$(ARCH_USB_SRC_PATH)/include
+CFLAGS += ${INCDIR_PREFIX}$(ARCH_USB_SRC_PATH)/common
+CFLAGS += ${INCDIR_PREFIX}$(ARCH_USB_SRC_PATH)/sun20iw1
 
-##CHIP_CSRCS += $(USB_PATH)$(DELIM)common$(DELIM)usb_init.c
-#CHIP_CSRCS += $(USB_PATH)$(DELIM)common$(DELIM)list_head_ext.c
-#CHIP_CSRCS += $(USB_PATH)$(DELIM)common$(DELIM)usb_phy.c
-#CHIP_CSRCS += $(USB_PATH)$(DELIM)platform$(DELIM)sun20iw1$(DELIM)usb_sun20iw1.c
+#CHIP_CSRCS += $(USB_PATH)/common/usb_init.c
+CHIP_CSRCS += $(USB_PATH)/common/list_head_ext.c
+CHIP_CSRCS += $(USB_PATH)/common/usb_phy.c
+CHIP_CSRCS += $(USB_PATH)/platform/sun20iw1/usb_sun20iw1.c
 
 endif
 
-#ifeq ($(CONFIG_USB_DEVICE),y)
-#CFLAGS += ${INCDIR_PREFIX}$(ARCH_USB_SRC_PATH)$(DELIM)udc
-#CFLAGS += ${INCDIR_PREFIX}$(ARCH_USB_SRC_PATH)$(DELIM)include
-#CFLAGS += ${INCDIR_PREFIX}$(ARCH_USB_SRC_PATH)$(DELIM)common
-#CHIP_CSRCS += $(USB_PATH)$(DELIM)udc$(DELIM)udc.c
-#CHIP_CSRCS += $(USB_PATH)$(DELIM)udc$(DELIM)udc_hal.c
-#CHIP_CSRCS += $(USB_PATH)$(DELIM)udc$(DELIM)usb_dma.c
-#endif
+ifeq ($(CONFIG_USB_DEVICE),y)
+CFLAGS += ${INCDIR_PREFIX}$(ARCH_USB_SRC_PATH)/udc
+CFLAGS += ${INCDIR_PREFIX}$(ARCH_USB_SRC_PATH)/include
+CFLAGS += ${INCDIR_PREFIX}$(ARCH_USB_SRC_PATH)/common
+CHIP_CSRCS += $(USB_PATH)/udc/udc.c
+CHIP_CSRCS += $(USB_PATH)/udc/udc_hal.c
+CHIP_CSRCS += $(USB_PATH)/udc/usb_dma.c
+endif
 
-#ifeq ($(CONFIG_USB_GADGET),y)
-#CFLAGS += ${INCDIR_PREFIX}$(ARCH_USB_SRC_PATH)$(DELIM)include
-#CFLAGS += ${INCDIR_PREFIX}$(ARCH_USB_SRC_PATH)$(DELIM)gadget
-#CHIP_CSRCS += $(USB_PATH)$(DELIM)gadget$(DELIM)gadget.c
-#endif
+ifeq ($(CONFIG_USB_GADGET),y)
+CFLAGS += ${INCDIR_PREFIX}$(ARCH_USB_SRC_PATH)/include
+CFLAGS += ${INCDIR_PREFIX}$(ARCH_USB_SRC_PATH)/gadget
+CHIP_CSRCS += $(USB_PATH)/gadget/gadget.c
+#CHIP_CSRCS += $(USB_PATH)/gadget/gadget_hal.c
+endif
 
 #ifeq ($(CONFIG_DRIVERS_USB_GADGET_ADB),y)
-#CFLAGS += ${INCDIR_PREFIX}$(ARCH_USB_SRC_PATH)$(DELIM)gadget
-#CHIP_CSRCS += $(USB_PATH)$(DELIM)gadget$(DELIM)function$(DELIM)adb.c
+#CFLAGS += ${INCDIR_PREFIX}$(ARCH_USB_SRC_PATH)/gadget
+#CHIP_CSRCS += $(USB_PATH)/gadget/function/adb.c
 #endif
-
-#CFLAGS := $(filter-out -flto%, $(CFLAGS))
-#CFLAGS += -fno-lto -fno-use-linker-plugin
-#LDFLAGS := $(filter-out -flto%, $(LDFLAGS))
-#LDFLAGS += -fno-lto
-
-EXTRA_LIBPATHS += -L $(ARCH_SRC)$(DELIM)chip$(DELIM)$(USB_PATH)
-EXTRA_LIBS += -lnuttx_sun8iw20p1_usb

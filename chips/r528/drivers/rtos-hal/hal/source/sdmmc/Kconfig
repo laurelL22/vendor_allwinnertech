@@ -6,6 +6,10 @@ config DRIVERS_SDMMC
 
 if DRIVERS_SDMMC
 
+config USE_SDMMC_MULT
+	bool "enable SD_MULT"
+	default n
+
 config USE_SD
 	bool "enable SD"
 	default n

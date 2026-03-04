@@ -38,4 +38,3 @@ else
 	include $(wildcard $(APPDIR)/vendor/allwinnertech/chips/r528/components/*/Make.defs)
 endif
 endif
-

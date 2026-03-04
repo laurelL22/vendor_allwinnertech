@@ -349,6 +349,9 @@ static int sunxifb_pandisplayoverlay(struct fb_vtable_s *vtable,
 int up_fbinitialize(int display)
 {
 	int ret = -1;
+	// 获取旋转角度
+	s32 rotation_degree = 0;
+	disp_sys_script_get_item("disp", "degree0", &rotation_degree, 1);
 	disp_probe();
 	if ((g_disp_drv.disp_init.fb_width[display] == 0)
 		|| (g_disp_drv.disp_init.fb_height[display] == 0)) {
@@ -377,9 +380,15 @@ int up_fbinitialize(int display)
 			g_disp_drv.disp_init.output_mode[display]);
 #endif
 	} else {
+// 只有90/270度才交换宽高
 #if defined(CONFIG_SUNXI_DISP2_FB_HW_ROTATION_SUPPORT)
+	if (rotation_degree == 1 || rotation_degree == 3) { // 90或270度
 		g_videoinfo.xres = g_disp_drv.disp_init.fb_height[display];
 		g_videoinfo.yres = g_disp_drv.disp_init.fb_width[display];
+	} else { // 0或180度不交换
+		g_videoinfo.xres = g_disp_drv.disp_init.fb_width[display];
+		g_videoinfo.yres = g_disp_drv.disp_init.fb_height[display];
+	}
 #else
 		g_videoinfo.xres = g_disp_drv.disp_init.fb_width[display];
 		g_videoinfo.yres = g_disp_drv.disp_init.fb_height[display];
@@ -394,7 +403,16 @@ int up_fbinitialize(int display)
 	g_planeinfo.display = 0;
 	g_planeinfo.stride = g_videoinfo.xres * g_planeinfo.bpp / 8;
 	g_planeinfo.fblen = g_videoinfo.xres * g_videoinfo.yres * g_planeinfo.bpp / 8 * FB_NUM;
-	g_planeinfo.fbmem = (void *)R528_DISP_DDR_MAPVADDR;
+
+	/* Ensure 64-byte alignment for LVGL */
+	uintptr_t map_vaddr = (uintptr_t)R528_DISP_DDR_MAPVADDR;
+	if (map_vaddr % 64 != 0)
+	{
+		lcdwarn("Warning: R528_DISP_DDR_MAPVADDR not 64-byte aligned: 0x%lx\\n", map_vaddr);
+		map_vaddr = (map_vaddr + 63) & ~63;
+	}
+	g_planeinfo.fbmem = (void *)map_vaddr;
+
 	DEBUGASSERT(g_planeinfo.fbmem != NULL);
 	g_planeinfo.xres_virtual = g_videoinfo.xres;
 	g_planeinfo.yres_virtual = g_videoinfo.yres * FB_NUM;
@@ -407,11 +425,16 @@ int up_fbinitialize(int display)
 	config.layer_id = 0;
 	config.enable = 1;
 #if defined(CONFIG_SUNXI_DISP2_FB_HW_ROTATION_SUPPORT)
-	config.info.screen_win.width = g_videoinfo.yres;
-	config.info.screen_win.height = g_videoinfo.xres;
+if (rotation_degree == 1 || rotation_degree == 3) { // 90或270度才交换
+    config.info.screen_win.width = g_videoinfo.yres;   // 600
+    config.info.screen_win.height = g_videoinfo.xres;  // 1024
+} else { // 0或180度不交换
+    config.info.screen_win.width = g_videoinfo.xres;   // 1024
+    config.info.screen_win.height = g_videoinfo.yres;  // 600
+}
 #else
-	config.info.screen_win.width = g_videoinfo.xres;
-	config.info.screen_win.height = g_videoinfo.yres;
+    config.info.screen_win.width = g_videoinfo.xres;   // 1024
+    config.info.screen_win.height = g_videoinfo.yres;  // 600
 #endif
 	config.info.mode = LAYER_MODE_BUFFER;
 	config.info.zorder = 1;
@@ -562,4 +585,3 @@ void up_fbuninitialize(int display)
 			fb_rot->free(fb_rot);
 #endif
 }
-

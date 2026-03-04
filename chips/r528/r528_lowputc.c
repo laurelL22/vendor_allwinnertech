@@ -42,7 +42,11 @@
 
 #include "arm_internal.h"
 
+#if defined (CONFIG_ARCH_BOARD_R528S3_GEMINI_S1)
+#define	UART_REG_ADDR	(0x02500800)
+#else
 #define	UART_REG_ADDR	(0x02500000)
+#endif
 #define UART_REG_RBR 	(UART_REG_ADDR + 0x00)
 #define UART_REG_THR 	(UART_REG_ADDR + 0x00)
 #define UART_REG_DLL 	(UART_REG_ADDR + 0x00)

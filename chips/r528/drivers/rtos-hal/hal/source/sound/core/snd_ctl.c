@@ -229,7 +229,7 @@ int ksnd_ctl_set_multi_args(const char *name, const char *elem, int num, ...)
 	va_start(ap, num);
 	for (j = 0; j < num; j++) {
 		value[j] = va_arg(ap, unsigned long);
-		snd_print("arg%d is :%d\n", j, value[j]);
+		snd_print("arg%d is :%lu\n", j, value[j]);
 	}
 	va_end(ap);
 

@@ -51,7 +51,7 @@ extern "C" {
 static __always_inline uint32_t HAL_GetHFClock(void)
 {
 //	return HAL_PRCM_GetHFClock();
-	_info("%s,%d Warning Use fix value 24000000\n", __FUNCTION__,__LINE__);
+	// _info("%s,%d Warning Use fix value 24000000\n", __FUNCTION__,__LINE__);
 	return 24*1000*1000;
 }
 
@@ -85,10 +85,10 @@ static __always_inline uint32_t HAL_GetDevClock(void)
 {
 //	return HAL_PRCM_GetDevClock();
 #ifndef SDC_PLL_CLK  
-    _info("%s,%d Warning Use fix value 1200000000\n", __FUNCTION__,__LINE__);
+    // _info("%s,%d Warning Use fix value 1200000000\n", __FUNCTION__,__LINE__);
 	return 1200*1000*1000;
 #else
- _info("%s,%d Warning Use fix value %d\n", __FUNCTION__,__LINE__, SDC_PLL_CLK);
+//  _info("%s,%d Warning Use fix value %d\n", __FUNCTION__,__LINE__, SDC_PLL_CLK);
 	return SDC_PLL_CLK;
 #endif
 }

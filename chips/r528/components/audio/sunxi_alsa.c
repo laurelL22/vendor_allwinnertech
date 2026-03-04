@@ -319,7 +319,7 @@ static int sunxi_audio_getcaps(FAR struct audio_lowerhalf_s *dev, int type,
 				/* Report the Sample rates we support */
 				ptr = (uint16_t *)caps->ac_controls.b;
 				*ptr =
-				AUDIO_SAMP_RATE_8K | AUDIO_SAMP_RATE_16K |
+				AUDIO_SAMP_RATE_8K | AUDIO_SAMP_RATE_16K | AUDIO_SAMP_RATE_24K |
 				AUDIO_SAMP_RATE_32K | AUDIO_SAMP_RATE_44K |
 				AUDIO_SAMP_RATE_48K;
 				break;
@@ -456,6 +456,7 @@ sunxi_audio_configure(FAR struct audio_lowerhalf_s *dev,
 		switch (priv->samprate) {
 			case 8000:
 			case 16000:
+			case 24000:
 			case 32000:
 			case 44100:
 			case 48000:
@@ -510,7 +511,7 @@ sunxi_audio_configure(FAR struct audio_lowerhalf_s *dev,
 			  }
 		}
 #endif
-
+#if 0
 		int hw_ver = 0;
 		char eq_file[64]={0};
 		hw_ver = hw_version_get();
@@ -540,7 +541,7 @@ sunxi_audio_configure(FAR struct audio_lowerhalf_s *dev,
 			deinit_eq_prms(&priv->eqprms);
 			priv->eq_enable = false;
 		}
-
+#endif
 		ret = OK;
 		}
 		break;
@@ -762,9 +763,7 @@ static int sunxi_audio_start(FAR struct audio_lowerhalf_s *dev)
 #endif
 {
 	FAR struct sunxi_dev_s *priv = (FAR struct sunxi_dev_s *)dev;
-	struct sched_param sparam;
 	struct mq_attr attr;
-	FAR void *value;
 	int ret = -1;
 	unsigned int stack_size;
 
@@ -905,9 +904,7 @@ static int sunxi_audio_stop(FAR struct audio_lowerhalf_s *dev)
 {
 	FAR struct sunxi_dev_s *priv = (FAR struct sunxi_dev_s *)dev;
 	struct audio_msg_s term_msg;
-	FAR void *value;
 	int ret = 0;
-	int i = 0;
 	unsigned int prio;
 	syslog(LOG_INFO, "%d, %s\n", __LINE__, __func__);
 
@@ -1240,9 +1237,6 @@ static int sunxi_audio_release(FAR struct audio_lowerhalf_s *dev,
 static int sunxi_audio_release(FAR struct audio_lowerhalf_s *dev)
 #endif
 {
-	FAR struct sunxi_dev_s *priv = (FAR struct sunxi_dev_s *)dev;
-	FAR void *value;
-
 	return OK;
 }
 
@@ -1283,7 +1277,7 @@ static void record_workerthread(void *arg)
 	if (ret < 0)
 	{
 		syslog(LOG_ERR, "audio open error:%d\n", ret);
-		return NULL;
+		return;
 	}
 
 	ret = set_param(priv->handle, priv->format, priv->samprate, priv->nchannels,
@@ -1427,7 +1421,6 @@ static void play_workerthread(void *arg)
 	unsigned int prio;
 	int ret, msglen;
 	void *equalizer = NULL;
-	uint8_t *samp;
 
 	snd_pcm_sframes_t samples;
 	snd_pcm_uframes_t frames = 0;

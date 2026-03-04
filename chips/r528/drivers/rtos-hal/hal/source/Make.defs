@@ -31,7 +31,7 @@
 #  OF THE POSSIBILITY OF SUCH DAMAGE.
 ############################################################################
 
-ARCH_SRC := $(TOPDIR)$(DELIM)arch$(DELIM)$(CONFIG_ARCH)$(DELIM)src
-ARCH_INC := $(TOPDIR)$(DELIM)arch$(DELIM)$(CONFIG_ARCH)$(DELIM)include
+ARCH_SRC := $(TOPDIR)/arch/$(CONFIG_ARCH)/src
+ARCH_INC := $(TOPDIR)/arch/$(CONFIG_ARCH)/include
 
-include $(wildcard $(AW_SRCDIR)$(DELIM)drivers$(DELIM)rtos-hal$(DELIM)hal$(DELIM)source$(DELIM)*$(DELIM)Make.defs)
+include $(wildcard $(AW_SRCDIR)/drivers/rtos-hal/hal/source/*/Make.defs)
