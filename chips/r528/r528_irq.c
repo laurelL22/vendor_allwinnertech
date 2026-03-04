@@ -6,10 +6,12 @@
 
  * DISCLAIMER
  * THIRD PARTY LICENCES MAY BE REQUIRED TO IMPLEMENT THE SOLUTION/PRODUCT.
- * IF YOU NEED TO INTEGRATE THIRD PARTY’S TECHNOLOGY (SONY, DTS, DOLBY, AVS OR MPEGLA, ETC.)
+ * IF YOU NEED TO INTEGRATE THIRD PARTY’S TECHNOLOGY (SONY, DTS, DOLBY, AVS OR
+ MPEGLA, ETC.)
  * IN ALLWINNERS’SDK OR PRODUCTS, YOU SHALL BE SOLELY RESPONSIBLE TO OBTAIN
  * ALL APPROPRIATELY REQUIRED THIRD PARTY LICENCES.
- * ALLWINNER SHALL HAVE NO WARRANTY, INDEMNITY OR OTHER OBLIGATIONS WITH RESPECT TO MATTERS
+ * ALLWINNER SHALL HAVE NO WARRANTY, INDEMNITY OR OTHER OBLIGATIONS WITH RESPECT
+ TO MATTERS
  * COVERED UNDER ANY REQUIRED THIRD PARTY LICENSE.
  * YOU ARE SOLELY RESPONSIBLE FOR YOUR USAGE OF THIRD PARTY’S TECHNOLOGY.
 
@@ -39,8 +41,8 @@
 #include <nuttx/arch.h>
 
 #include "arm_internal.h"
-#include "sctlr.h"
 #include "gic.h"
+#include "sctlr.h"
 
 /****************************************************************************
  * Pre-processor Definitions
@@ -64,31 +66,29 @@ uint64_t g_fiqstack_alloc[INTSTACK_ALLOC >> 3];
 
 /* These are arrays that point to the top of each interrupt stack */
 
-uintptr_t g_irqstack_top[CONFIG_SMP_NCPUS] =
-{
-  (uintptr_t)g_irqstack_alloc + INTSTACK_SIZE,
+uintptr_t g_irqstack_top[CONFIG_SMP_NCPUS] = {
+    (uintptr_t)g_irqstack_alloc + INTSTACK_SIZE,
 #if CONFIG_SMP_NCPUS > 1
-  (uintptr_t)g_irqstack_alloc + (2 * INTSTACK_SIZE),
+    (uintptr_t)g_irqstack_alloc + (2 * INTSTACK_SIZE),
 #endif
 #if CONFIG_SMP_NCPUS > 2
-  (uintptr_t)g_irqstack_alloc + (3 * INTSTACK_SIZE),
+    (uintptr_t)g_irqstack_alloc + (3 * INTSTACK_SIZE),
 #endif
 #if CONFIG_SMP_NCPUS > 3
-  (uintptr_t)g_irqstack_alloc + (4 * INTSTACK_SIZE)
+    (uintptr_t)g_irqstack_alloc + (4 * INTSTACK_SIZE)
 #endif
 };
 
-uintptr_t g_fiqstack_top[CONFIG_SMP_NCPUS] =
-{
-  (uintptr_t)g_fiqstack_alloc + INTSTACK_SIZE,
+uintptr_t g_fiqstack_top[CONFIG_SMP_NCPUS] = {
+    (uintptr_t)g_fiqstack_alloc + INTSTACK_SIZE,
 #if CONFIG_SMP_NCPUS > 1
-  (uintptr_t)g_fiqstack_alloc + 2 * INTSTACK_SIZE,
+    (uintptr_t)g_fiqstack_alloc + 2 * INTSTACK_SIZE,
 #endif
 #if CONFIG_SMP_NCPUS > 2
-  (uintptr_t)g_fiqstack_alloc + 3 * INTSTACK_SIZE,
+    (uintptr_t)g_fiqstack_alloc + 3 * INTSTACK_SIZE,
 #endif
 #if CONFIG_SMP_NCPUS > 3
-  (uintptr_t)g_fiqstack_alloc + 4 * INTSTACK_SIZE
+    (uintptr_t)g_fiqstack_alloc + 4 * INTSTACK_SIZE
 #endif
 };
 
@@ -114,22 +114,18 @@ extern uint8_t _vector_end[];   /* End+1 of vector block */
  *
  ****************************************************************************/
 
-static inline irqstate_t irq_enable(void)
-{
+static inline irqstate_t irq_enable(void) {
   unsigned int cpsr;
 
-  __asm__ __volatile__
-    (
-      "\tmrs    %0, cpsr\n"
+  __asm__ __volatile__("\tmrs    %0, cpsr\n"
 #ifdef CONFIG_X4B_TEE
-      "\tcpsie  if\n"
+                       "\tcpsie  if\n"
 #else
-      "\tcpsie  i\n"
+                         "\tcpsie  i\n"
 #endif
-      : "=r" (cpsr)
-      :
-      : "memory"
-    );
+                       : "=r"(cpsr)
+                       :
+                       : "memory");
 
   return cpsr;
 }
@@ -148,8 +144,7 @@ static inline irqstate_t irq_enable(void)
  *
  ****************************************************************************/
 
-void up_irqinitialize(void)
-{
+void up_irqinitialize(void) {
   /* The following operations need to be atomic, but since this function is
    * called early in the initialization sequence, we expect to have exclusive
    * access to the GIC.
@@ -157,8 +152,8 @@ void up_irqinitialize(void)
 
   /* Initialize the Generic Interrupt Controller (GIC) for CPU0 */
 
-  arm_gic0_initialize();  /* Initialization unique to CPU0 */
-  arm_gic_initialize();   /* Initialization common to all CPUs */
+  arm_gic0_initialize(); /* Initialization unique to CPU0 */
+  arm_gic_initialize();  /* Initialization common to all CPUs */
 
 #ifdef CONFIG_ARCH_LOWVECTORS
   /* If CONFIG_ARCH_LOWVECTORS is defined, then the vectors located at the
@@ -199,8 +194,7 @@ void up_irqinitialize(void)
  ****************************************************************************/
 
 #if defined(CONFIG_SMP) && CONFIG_ARCH_INTERRUPTSTACK > 7
-uintptr_t up_get_intstackbase(int cpu)
-{
+uintptr_t up_get_intstackbase(int cpu) {
   return g_irqstack_top[cpu] - INTSTACK_SIZE;
 }
 #endif
