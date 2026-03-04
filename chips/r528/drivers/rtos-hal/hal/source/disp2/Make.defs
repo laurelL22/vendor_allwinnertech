@@ -24,11 +24,16 @@ CHIP_CSRCS += $(DISP_PATH)$(DELIM)soc$(DELIM)gc9503cv_mipi_config_evb2.c
 endif
 
 ifeq ($(CONFIG_ARCH_BOARD_R528S3_EVB4), y)
-CHIP_CSRCS += $(DISP_PATH)$(DELIM)soc$(DELIM)gc9503cv_mipi_config_evb4.c
+ifeq ($(CONFIG_LCD_SUPPORT_T070S140B),y)
+CHIP_CSRCS += $(DISP_PATH)$(DELIM)soc$(DELIM)t070s140b_mipi_config.c
+endif
+ifeq ($(CONFIG_LCD_SUPPORT_SSD1306),y)
+CHIP_CSRCS += $(DISP_PATH)$(DELIM)soc$(DELIM)ssd1306_spi_config.c
+endif
 endif
 
-ifeq ($(CONFIG_ARCH_BOARD_R528S3_VELAEVB1), y)
-CHIP_CSRCS += $(DISP_PATH)$(DELIM)soc$(DELIM)zjy4305_rgb_config_evb1.c
+ifeq ($(CONFIG_ARCH_BOARD_R528S3_GEMINI_S1), y)
+CHIP_CSRCS += $(DISP_PATH)$(DELIM)soc$(DELIM)t070s140b_mipi_config.c
 endif
 
 ifeq ($(CONFIG_ARCH_BOARD_R528S3_X4B), y)
@@ -96,6 +101,24 @@ endif
 
 ifeq ($(CONFIG_LCD_SUPPORT_TFT08006),y)
 CHIP_CSRCS += $(DISP_PATH)$(DELIM)disp$(DELIM)lcd$(DELIM)tft08006.c
+endif
+
+ifeq ($(CONFIG_LCD_SUPPORT_T070S140B),y)
+CHIP_CSRCS += $(DISP_PATH)$(DELIM)disp$(DELIM)lcd$(DELIM)t070s140b.c
+endif
+
+ifeq ($(CONFIG_LCD_SUPPORT_SSD1306),y)
+CHIP_CSRCS += $(DISP_PATH)$(DELIM)disp$(DELIM)lcd$(DELIM)ssd1306.c
+endif
+
+ifeq ($(CONFIG_LCD_SUPPORT_ILI9341),y)
+CHIP_CSRCS += $(DISP_PATH)$(DELIM)disp$(DELIM)lcd$(DELIM)ili9341.c
+CHIP_CSRCS += $(DISP_PATH)$(DELIM)soc$(DELIM)ili9341_lcd_spi.c
+CHIP_CSRCS += $(DISP_PATH)$(DELIM)soc$(DELIM)ili9341_lcd_config.c
+endif
+
+ifeq ($(CONFIG_LCD_SUPPORT_ST7789),y)
+CHIP_CSRCS += $(DISP_PATH)$(DELIM)soc$(DELIM)st7789_lcd_spi.c
 endif
 
 ifeq ($(CONFIG_VIDEO_FB),y)

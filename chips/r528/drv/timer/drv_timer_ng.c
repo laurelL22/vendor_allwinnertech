@@ -37,6 +37,7 @@
 #include <debug.h>
 
 #include <nuttx/irq.h>
+#include <nuttx/spinlock.h>
 #include <nuttx/clock.h>
 #include <nuttx/timers/oneshot.h>
 #include <arch/board/board.h>
@@ -113,8 +114,7 @@ retry:
  * Private Function Prototypes
  ****************************************************************************/
 
-static int r528_timer_start(FAR struct oneshot_lowerhalf_s *lower, oneshot_callback_t callback,
-			    FAR void *arg, FAR const struct timespec *ts);
+static int r528_timer_start(FAR struct oneshot_lowerhalf_s *lower, FAR const struct timespec *ts);
 static int r528_timer_cancel(FAR struct oneshot_lowerhalf_s *lower, FAR struct timespec *ts);
 static int r528_timer_max_delay(FAR struct oneshot_lowerhalf_s *lower, FAR struct timespec *ts);
 static int r528_timer_current(FAR struct oneshot_lowerhalf_s *lower, FAR struct timespec *ts);
@@ -142,10 +142,6 @@ static const struct oneshot_operations_s g_timerops = {
 	.cancel		= r528_timer_cancel,
 	.max_delay	= r528_timer_max_delay,
 	.current	= r528_timer_current,
-	.tick_start     = r528_tick_start,
-	.tick_cancel    = r528_tick_cancel,
-	.tick_max_delay = r528_tick_max_delay,
-	.tick_current   = r528_tick_current,
 };
 
 #ifdef CONFIG_R528_ONESHOT0
@@ -239,8 +235,7 @@ static hal_irqreturn_t r528_timer_irq_handle(void *arg)
 
 static volatile int r528_timer_debug_loop = 1;
 static volatile struct timespec r528_timer_debug_ts;
-static int r528_timer_start(FAR struct oneshot_lowerhalf_s *lower, oneshot_callback_t callback,
-			    FAR void *arg, FAR const struct timespec *ts)
+static int r528_timer_start(FAR struct oneshot_lowerhalf_s *lower, FAR const struct timespec *ts)
 {
 	FAR struct sunxi_timer_s * restrict priv = container_of(lower, struct sunxi_timer_s, lower);
 	uint32_t intval = TIMESTAMP_TO_TIMER_INTVAL(TIMESPEC_TO_TIMESTAMP(ts));
@@ -252,8 +247,8 @@ static int r528_timer_start(FAR struct oneshot_lowerhalf_s *lower, oneshot_callb
 	flags = enter_critical_section();
 #endif
 
-	priv->callback = callback;
-	priv->arg = arg;
+	priv->callback = priv->lower.callback;
+	priv->arg = priv->lower.arg;
 
 	if (TIMER_IS_STARTED(priv)) {
 		TIMER_STOP_SYNC(priv);

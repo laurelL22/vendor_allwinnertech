@@ -31,6 +31,7 @@
 
 #include <nuttx/config.h>
 #include <nuttx/arch.h>
+#include <nuttx/kmalloc.h>
 
 #include <stdint.h>
 #include <errno.h>

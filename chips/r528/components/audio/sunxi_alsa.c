@@ -718,6 +718,34 @@ static int record_fillbuffer(FAR struct sunxi_dev_s *priv)
 	return ret;
 }
 
+#if !(defined CONFIG_AW_AUDIO_RPMSG_CTRL)
+void *audio_thread_create(sem_t *sem, void (*entry)(void *data), void *data, const char *name, int stack_size, int priority)
+{
+	hal_thread_t audio_task;
+
+	sem_init(sem, 0, 0);
+	audio_task = hal_thread_create(entry, data, name, stack_size, priority);
+
+	return (void *)audio_task;
+}
+
+int audio_thread_stop(sem_t *sem, void *thread)
+{
+	int ret;
+
+	ret = nxsem_tickwait_uninterruptible(sem, MS_TO_OSTICK(10000));
+	if (ret != OK) {
+		syslog(LOG_INFO, "ret:%d, wait thread quit timeout!\n", ret);
+		hal_thread_stop(thread);
+	}
+
+	sem_destroy(sem);
+	thread = NULL;
+
+	return 0;
+}
+#endif
+
 /****************************************************************************
  * Name: sunxi_audio_start
  *

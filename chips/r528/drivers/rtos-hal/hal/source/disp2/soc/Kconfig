@@ -41,6 +41,18 @@ config DEFAULT_LVDS
 	---help---
 	  board, disp with lvds
 
+config T070S140B_MIPI
+	bool "board, disp with T070S140B MIPI"
+	default n
+	---help---
+	  board, disp with T070S140B MIPI 1024x600 panel
+
+config SSD1306_SPI
+	bool "board, disp with SSD1306 SPI"
+	default n
+	---help---
+	  board, disp with SSD1306 SPI 128x64 panel
+
 endmenu
 
 menu "Soc Select"

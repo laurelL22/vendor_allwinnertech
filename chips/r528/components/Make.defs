@@ -31,9 +31,11 @@
 #  OF THE POSSIBILITY OF SUCH DAMAGE.
 ############################################################################
 
+ifneq ($(CONFIG_ALLWINNER_BINARY_ONLY),y)
 ifdef AW_SRCDIR
 	include $(wildcard $(AW_SRCDIR)/components/*/Make.defs)
 else
 	include $(wildcard $(APPDIR)/vendor/allwinnertech/chips/r528/components/*/Make.defs)
+endif
 endif
 

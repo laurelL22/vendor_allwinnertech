@@ -1,8 +1,8 @@
 #ifndef __HAL_LEDC_H
 #define __HAL_LEDC_H
 #include "sunxi_hal_common.h"
-#include "ledc/platform_ledc.h"
-#include "ledc/common_ledc.h"
+
+
 #include <hal_sem.h>
 #include <hal_clk.h>
 #include <hal_reset.h>
@@ -10,6 +10,52 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+/* LEDC register offset */
+#define LEDC_CTRL_REG       		(0x00) 	/* LEDC Control Register */
+#define LED_T01_TIMING_CTRL_REG     (0x04) 	/* LED T0 & 1 Timing Control Register */
+#define LEDC_DATA_FINISH_CNT_REG   	(0x08) 	/* LEDC Data Finish Counter Register */
+#define LED_RST_TIMING_CTRL_REG    	(0x0c) 	/* LED Reset Timing Control Register */
+#define LEDC_WAIT_TIME0_CTRL_REG	(0x10)	/* LEDC Wait Time0 Control Register */
+#define LEDC_DATA_REG    			(0x14) 	/* LEDC Data Register */
+#define LEDC_DMA_CTRL_REG      		(0X18) 	/* LEDC Dma Control Register */
+#define LEDC_INTC_REG   			(0x1c)	/* LEDC Interrupt Control Register */
+#define LEDC_INTS_REG   			(0x20)	/* LEDC Interrupt Status Register */
+#define LEDC_WAIT_TIME1_CTRL_REG   	(0x28) 	/* LEDC Wait Time1 Control Register */
+#define LEDC_VER_NUM_REG   			(0x2C) 	/* LEDC Version Number Register */
+#define LEDC_FIFO_DATA0_REG   		(0x30) 	/* LEDC Fifo Data0 Register */
+#define LEDC_FIFO_DATA1_REG   		(0x34) 	/* LEDC Fifo Data1 Register */
+#define LEDC_FIFO_DATA2_REG   		(0x38) 	/* LEDC Fifo Data2 Register */
+
+#define LEDC_MAX_LED_COUNT 1024
+
+#define LEDC_DEFAULT_LED_COUNT 1
+
+#define LEDC_RESET_TIME_MIN_NS 84
+#define LEDC_RESET_TIME_MAX_NS 327000
+
+#define LEDC_T1H_MIN_NS 84
+#define LEDC_T1H_MAX_NS 2560
+
+#define LEDC_T1L_MIN_NS 84
+#define LEDC_T1L_MAX_NS 1280
+
+#define LEDC_T0H_MIN_NS 84
+#define LEDC_T0H_MAX_NS 1280
+
+#define LEDC_T0L_MIN_NS 84
+#define LEDC_T0L_MAX_NS 2560
+
+#define LEDC_WAIT_TIME0_MIN_NS 84
+#define LEDC_WAIT_TIME0_MAX_NS 10000
+
+#define LEDC_WAIT_TIME1_MIN_NS 84
+#define LEDC_WAIT_TIME1_MAX_NS 85000000000
+
+#define LEDC_WAIT_DATA_TIME_MIN_NS 84
+#define LEDC_WAIT_DATA_TIME_MAX_NS_IC 655000
+#define LEDC_WAIT_DATA_TIME_MAX_NS_FPGA 20000000
+
 
 #define SUNXI_LEDC_FIFO_DEPTH 32
 #define RESULT_COMPLETE 1
@@ -85,16 +131,19 @@ struct sunxi_led {
 	u32 regs_backup[ARRAY_SIZE(sunxi_ledc_regs_offset)];
 };
 
-int hal_ledc_init(void);
+#define LEDC_CLK_TYPE HAL_SUNXI_CCU
+#define LEDC_CLK_ID CLK_BUS_LEDC
+
+void hal_ledc_init(void);
 void hal_ledc_deinit(void);
-int hal_ledc_trans_data(struct ledc_config *ledc);
+void hal_ledc_trans_data(struct ledc_config *ledc);
 void hal_ledc_clear_all_irq(void);
 unsigned int hal_ledc_get_irq_status(void);
 void hal_ledc_dma_callback(void *para);
 void hal_ledc_reset(void);
 int sunxi_led_init(void);
 int sunxi_set_led_brightness(int led_num, unsigned int brightness);
-int sunxi_set_all_led(int led_num, unsigned int brightness);
+//int sunxi_set_all_led(int led_num, unsigned int brightness);
 #ifdef __cplusplus
 }
 #endif

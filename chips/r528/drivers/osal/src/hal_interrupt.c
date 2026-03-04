@@ -2,6 +2,7 @@
 #include <hal_interrupt.h>
 #include <hal_status.h>
 #include <nuttx/irq.h>
+#include <nuttx/spinlock.h>
 #include <nuttx/arch.h>
 
 static hal_irq_handler_t g_irqhandler[NR_IRQS];
@@ -45,12 +46,12 @@ uint32_t hal_interrupt_get_nest(void)
 
 unsigned long hal_interrupt_disable_irqsave(void)
 {
-    return (unsigned long)enter_critical_section();
+    return (unsigned long)up_irq_save();
 }
 
 void hal_interrupt_enable_irqrestore(unsigned long flag)
 {
-	leave_critical_section(flag);
+	up_irq_restore((irqstate_t)flag);
 }
 
 unsigned long hal_interrupt_is_disable(void)
@@ -63,4 +64,22 @@ unsigned long hal_interrupt_is_disable(void)
 
 void hal_interrupt_init(void)
 {
+}
+
+#ifdef enter_critical_section
+#undef enter_critical_section
+#endif
+
+#ifdef leave_critical_section
+#undef leave_critical_section
+#endif
+
+irqstate_t enter_critical_section(void)
+{
+	return up_irq_save();
+}
+
+void leave_critical_section(irqstate_t flag)
+{
+	up_irq_restore(flag);
 }

@@ -236,6 +236,7 @@ typedef struct _sunxi_hal_poll_ops
 } sunxi_hal_poll_ops;
 
 /* bitops */
+#undef fls
 extern int fls(int x);
 
 void hal_free_coherent(void *addr);
