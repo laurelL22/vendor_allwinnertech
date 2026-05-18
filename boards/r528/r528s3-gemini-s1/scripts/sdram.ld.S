@@ -70,10 +70,14 @@ SECTIONS
         *(.gnu.linkonce.r.*)
         *(.gnu.linkonce.armextab.*)
         *(.ARM.extab*)
+        _etext = ABSOLUTE(.);
+    } > sdram
+
+    .ARM.exidx : ALIGN(4)
+    {
         PROVIDE_HIDDEN (__exidx_start = .);
         *(.ARM.exidx* .gnu.linkonce.armexidx.*)
         PROVIDE_HIDDEN (__exidx_end = .);
-        _etext = ABSOLUTE(.);
     } > sdram
 
     .init_section :

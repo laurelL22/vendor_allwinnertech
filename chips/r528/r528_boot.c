@@ -41,7 +41,20 @@
 #include <sys/mount.h>
 #include <nuttx/config.h>
 #include <nuttx/audio/audio.h>
-#include <nuttx/lib/modlib.h>
+#if defined(__has_include)
+#  if __has_include(<nuttx/lib/modlib.h>)
+#    include <nuttx/lib/modlib.h>
+#    define R528_USE_MODLIB 1
+#  elif __has_include(<nuttx/lib/elf.h>)
+#    include <nuttx/lib/elf.h>
+#    define R528_USE_LIBELF 1
+#  else
+#    error "Neither <nuttx/lib/modlib.h> nor <nuttx/lib/elf.h> is available"
+#  endif
+#else
+#  include <nuttx/lib/modlib.h>
+#  define R528_USE_MODLIB 1
+#endif
 #ifdef CONFIG_VIDEO_FB
 #include <nuttx/video/fb.h>
 #endif
@@ -154,6 +167,25 @@ int r528_read_resetflag(void);
 
 extern uint32_t _vector_start; /* Beginning of vector block */
 extern uint32_t _vector_end;   /* End+1 of vector block */
+
+static int r528_module_initialize(FAR const char *path,
+                                  FAR struct mod_loadinfo_s *loadinfo)
+{
+#ifdef R528_USE_MODLIB
+  return modlib_initialize(path, loadinfo);
+#else
+  return libelf_initialize(path, loadinfo);
+#endif
+}
+
+static int r528_module_load(FAR struct mod_loadinfo_s *loadinfo)
+{
+#ifdef R528_USE_MODLIB
+  return modlib_load(loadinfo);
+#else
+  return libelf_load(loadinfo);
+#endif
+}
 
 /****************************************************************************
  * Private Data
@@ -984,7 +1016,7 @@ int board_boot_image(const char *path, uint32_t hdr_size)
 #ifdef CONFIG_ARCH_TRUSTZONE_SECURE
   up_irq_enable();
 #endif
-  uint32_t ret;
+  int ret;
 
   struct mod_loadinfo_s loadinfo;
 
@@ -993,20 +1025,20 @@ int board_boot_image(const char *path, uint32_t hdr_size)
   /* Initialize the ELF library to load the program binary. */
   syslog(LOG_INFO, "elf_init...\n");
 
-  ret = modlib_initialize(path, &loadinfo);
+  ret = r528_module_initialize(path, &loadinfo);
   if (ret != 0)
     {
-      syslog(LOG_ERR, "Failed to modlib_initialize: %ld\n", ret);
+      syslog(LOG_ERR, "Failed to initialize module image: %d\n", ret);
       syslog_flush();
       return -1;
     }
 
   /* Load the program binary */
   syslog(LOG_INFO, "elf_load...\n");
-  ret = modlib_load(&loadinfo);
+  ret = r528_module_load(&loadinfo);
   if (ret != 0)
     {
-      syslog(LOG_ERR, "Failed to modlib_load: %ld\n", ret);
+      syslog(LOG_ERR, "Failed to load module image: %d\n", ret);
       syslog_flush();
     }
 

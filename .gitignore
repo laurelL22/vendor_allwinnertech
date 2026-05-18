@@ -15,3 +15,4 @@ etctmp.c
 chips/r528/**/*.ddc
 Make.dep
 apps/Kconfig
+*.su

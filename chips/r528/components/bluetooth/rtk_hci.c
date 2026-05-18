@@ -98,6 +98,17 @@ struct bt_hci_evt_hdr
 
 static struct rtk_bt_priv_s g_bthci_dev = { 0 };
 
+static FAR struct rtk_bt_priv_s *bthci_from_drv(FAR struct bt_driver_s *drv)
+{
+  if (drv != &g_bthci_dev.drv)
+    {
+      wlerr("invalid drv:%p expect:%p", drv, &g_bthci_dev.drv);
+      return NULL;
+    }
+
+  return &g_bthci_dev;
+}
+
 /****************************************************************************
  * Private Function Prototypes
  ****************************************************************************/
@@ -147,6 +158,19 @@ static void bthci_poll_cb(FAR struct rtk_bt_priv_s *dev, void *userdata)
   int ret;
   FAR uint8_t *pstart;
   FAR uint8_t *pend;
+
+  if (dev->filep_uart.f_inode == NULL)
+    {
+      wlerr("%s: uart file closed", __func__);
+      return;
+    }
+
+  if (dev->rxlen >= sizeof(dev->rxbuf))
+    {
+      wlerr("%s: rxlen overflow:%u", __func__, dev->rxlen);
+      dev->rxlen = 0;
+      return;
+    }
 
   do
     {
@@ -239,7 +263,12 @@ static int btuart_rx_task(int argc, FAR char **argv)
 
 static int bthci_open(FAR struct bt_driver_s *drv)
 {
-  FAR struct rtk_bt_priv_s *dev = (struct rtk_bt_priv_s *)drv;
+  FAR struct rtk_bt_priv_s *dev = bthci_from_drv(drv);
+
+  if (dev == NULL)
+    {
+      return -EINVAL;
+    }
 
   wlinfo("%s, id:%d", __func__, dev->id);
   return OK;
@@ -248,8 +277,19 @@ static int bthci_open(FAR struct bt_driver_s *drv)
 static int bthci_send(FAR struct bt_driver_s *drv, enum bt_buf_type_e type,
                       FAR void *data, size_t len)
 {
-  FAR struct rtk_bt_priv_s *dev = (struct rtk_bt_priv_s *)drv;
+  FAR struct rtk_bt_priv_s *dev = bthci_from_drv(drv);
   int ret;
+
+  if (dev == NULL)
+    {
+      return -EINVAL;
+    }
+
+  if (dev->filep_uart.f_inode == NULL)
+    {
+      wlerr("%s: uart file closed, state:%u", __func__, dev->state);
+      return -ENODEV;
+    }
 
   bt_dump("bthci tx", data, len);
 
@@ -274,6 +314,11 @@ static int bthci_ioctl(FAR struct bt_driver_s *driver, int cmd, unsigned long ar
 
 static void bthci_close(struct bt_driver_s *drv)
 {
+  if (bthci_from_drv(drv) == NULL)
+    {
+      return;
+    }
+
   wlinfo("%s", __func__);
 }
 

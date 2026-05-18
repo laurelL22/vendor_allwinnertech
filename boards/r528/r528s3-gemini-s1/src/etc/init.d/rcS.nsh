@@ -57,9 +57,6 @@ then
   reboot
 fi
 
-echo "Starting bluetoothd..." 
-bluetoothd &
-
 #ifndef CONFIG_LCD_DEV
 #ifdef CONFIG_SHOW_LOGO
 /* Do not show logo if system crashed or during silient OTA. */
@@ -91,6 +88,11 @@ fi
 luncher_mini &
 #endif
 
-echo "Boot nsh ok"
-
+#ifdef CONFIG_BLUETOOTH_SERVER
+sleep 8
+echo "Starting bluetoothd..." 
+bluetoothd &
 #endif
+
+echo "Boot nsh ok"
+#endif /* CONFIG_GEMINI_S1_NSH */

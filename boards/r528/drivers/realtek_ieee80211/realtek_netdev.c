@@ -6,6 +6,7 @@
 #include <nuttx/kmalloc.h>
 #include <nuttx/kthread.h>
 #include <nuttx/wireless/wireless.h>
+#include <stdatomic.h>
 #include <wireless.h>
 #include <nuttx/net/net.h>
 #include "net_stack_intf.h"
@@ -13,6 +14,15 @@
 #include <stdio.h>
 #include <wifi_conf.h>
 #include <osdep_service.h>
+
+#ifdef atomic_set
+#undef atomic_set
+#endif
+
+#ifdef atomic_read
+#undef atomic_read
+#endif
+
 /* Get index from dev pointer. */
 
 #define DEVIDX(p) ((struct realtek_dev_s *)(p) - g_realtek_dev)
@@ -381,7 +391,6 @@ int   realtek_netdev_init(void)
   for (devidx = 0; devidx < 2; devidx++)
     {
       dev = &g_realtek_dev[devidx].dev;
-      
       atomic_init(&dev->quota[NETPKT_TX], 100);
       atomic_init(&dev->quota[NETPKT_RX], 200);
 
